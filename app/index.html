@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nani Systems</title>
+
+  <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial, sans-serif;}
+
+body{
+  background:#070A12;
+  color:#fff;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle, rgba(0,140,255,0.25), transparent 60%);
+  top:-200px;
+  left:-200px;
+  filter:blur(60px);
+  z-index:-1;
+  animation:float1 8s infinite alternate;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle, rgba(180,0,255,0.18), transparent 60%);
+  bottom:-200px;
+  right:-200px;
+  filter:blur(60px);
+  z-index:-1;
+  animation:float2 10s infinite alternate;
+}
+
+@keyframes float1{from{transform:translate(0,0)}to{transform:translate(80px,60px)}}
+@keyframes float2{from{transform:translate(0,0)}to{transform:translate(-80px,-60px)}}
+
+.glass{
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:22px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.4);
+}
+
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  padding:15px 40px;
+  z-index:1000;
+  background:rgba(10,10,20,0.4);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+nav button{
+  background:none;
+  border:none;
+  color:#fff;
+  margin:0 10px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+nav button:hover{color:#4da6ff;transform:scale(1.1);}
+
+section{
+  padding:140px 20px 100px;
+  max-width:1100px;
+  margin:auto;
+}
+
+.hero{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:65px;
+  background:linear-gradient(90deg,#4da6ff,#b84dff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:20px;
+}
+
+.hero p{color:#aaa;font-size:18px;}
+
+.btn{
+  margin-top:20px;
+  padding:12px 25px;
+  border-radius:25px;
+  border:1px solid rgba(77,166,255,0.4);
+  background:rgba(77,166,255,0.1);
+  color:#fff;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.btn:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(77,166,255,0.3);}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+
+.card:hover{transform:translateY(-8px) scale(1.03);}
+
+.hidden{display:none;}
+
+.project-img{
+  width:100%;
+  height:150px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+h2{margin-bottom:20px;font-size:30px;}
+h3{margin-top:25px;color:#ccc;}
+p{line-height:1.5;color:#aaa;}
+
+/* ABOUT STATS */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px;
+  margin-top:20px;
+}
+.stat-box{
+  padding:15px;
+  border-radius:15px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  text-align:center;
+}
+.stat-box h3{color:#4da6ff;font-size:22px;}
+
+/* SKILL BARS */
+.skill{
+  margin-top:15px;
+}
+.skill-title{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  margin-bottom:5px;
+}
+.bar{
+  width:100%;
+  height:8px;
+  background:rgba(255,255,255,0.1);
+  border-radius:20px;
+  overflow:hidden;
+}
+.bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,#4da6ff,#b84dff);
+}
+.logo-box{
+  width:100%;
+  height:150px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  font-weight:bold;
+  background:linear-gradient(135deg,#4da6ff,#b84dff);
+  color:#fff;
+  letter-spacing:2px;
+  box-shadow:0 0 25px rgba(77,166,255,0.4);
+  transition:0.4s;
+}
+
+.logo-box:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 40px rgba(184,77,255,0.6);
+}
+.card{
+  padding:20px;
+  transition:0.3s;
+  cursor:pointer;
+}
+
+.card:active{
+  transform:scale(0.97);
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:scale(0.9);}
+  to{opacity:1; transform:scale(1);}
+}
+
+.hero h1{
+  animation:fadeUp 1s ease forwards;
+}
+
+.hero p{
+  animation:fadeUp 1.5s ease forwards;
+}
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(30px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+#particles{
+  position:fixed;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+  z-index:-2;
+}
+
+button:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+</style>
+</head>
+
+<body>
+<canvas id="particles"></canvas>
+<nav class="glass">
+  <h2>Nani Systems</h2>
+  <div>
+    <button onclick="showSection('home')">Home</button>
+    <button onclick="showSection('about')">About</button>
+    <button onclick="showSection('services')">Services</button>
+    <button onclick="showSection('projects')">Projects</button>
+    <button onclick="showSection('products')">Products</button>
+    <button onclick="showSection('contact')">Contact</button>
+  </div>
+</nav>
+
+<section id="home" class="hero">
+
+  <h1>
+    <span style="font-size:18px;color:#4da6ff;letter-spacing:2px;">
+        DIGITAL ARCHITECT • SYSTEM CREATOR
+    </span><br><br>
+
+    I Build <span id="typing"></span>
+  </h1>
+
+  <p style="max-width:600px;margin-top:20px;">
+    I help businesses, creators, and startups build powerful systems that
+    automate operations, generate income, and scale fast.
+  </p>
+
+  <div style="margin-top:30px;display:flex;gap:15px;flex-wrap:wrap;justify-content:center;">
+    <button class="btn" onclick="showSection('projects')">View My Work</button>
+    <button class="btn" onclick="showSection('services')">Hire Me</button>
+  </div>
+
+  <!-- TRUST STRIP -->
+  <div style="margin-top:50px;display:flex;gap:30px;flex-wrap:wrap;justify-content:center;color:#aaa;">
+    <div>✔ Systems Built</div>
+    <div>✔ Live Platforms</div>
+    <div>✔ Business Automation</div>
+    <div>✔ Real-World Solutions</div>
+  </div>
+</section>
+
+
+<!-- ABOUT DASHBOARD UPGRADED -->
+<section id="about" class="glass hidden">
+  <h2>Professional Profile</h2>
+
+  <p>
+    I am a self-taught systems developer and digital architect focused on building scalable platforms,
+    automation systems, and high-performance applications that solve real business challenges.
+  </p>
+
+  <p>
+    My experience spans across web development, application systems, game environments, and business automation.
+    I specialize in transforming ideas into fully functional digital ecosystems that improve efficiency,
+    enhance user experience, and create measurable value.
+  </p>
+
+  <p>
+    With a foundation built through hands-on development and real-world problem solving,
+    I bring a practical and results-driven approach to every project — ensuring that each system
+    is not only functional, but optimized for growth and long-term sustainability.
+  </p>
+
+  <!-- PERFORMANCE METRICS -->
+  <h3>Performance Overview</h3>
+  <div class="stats">
+    <div class="stat-box"><h3>3+</h3><p>Active Platforms</p></div>
+    <div class="stat-box"><h3>10+</h3><p>Systems Developed</p></div>
+    <div class="stat-box"><h3>5+</h3><p>Technical Domains</p></div>
+    <div class="stat-box"><h3>100%</h3><p>Project Commitment</p></div>
+  </div>
+
+  <!-- CORE CAPABILITIES -->
+  <h3>Core Capabilities</h3>
+  <div class="grid">
+    <div class="card glass">
+      <h4>System Architecture</h4>
+      <p>Designing scalable and efficient systems that integrate seamlessly across platforms.</p>
+    </div>
+
+    <div class="card glass">
+      <h4>Application Development</h4>
+      <p>Building custom web and mobile applications tailored to business needs.</p>
+    </div>
+
+    <div class="card glass">
+      <h4>Business Automation</h4>
+      <p>Creating systems that reduce manual work, improve workflows, and increase productivity.</p>
+    </div>
+
+    <div class="card glass">
+      <h4>User Experience Design</h4>
+      <p>Developing intuitive and engaging interfaces that enhance user interaction.</p>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <h3>Technical Proficiency</h3>
+
+  <div class="skill">
+    <div class="skill-title"><span>Frontend Development</span><span>90%</span></div>
+    <div class="bar"><div class="bar-fill" style="width:90%"></div></div>
+  </div>
+
+  <div class="skill">
+    <div class="skill-title"><span>Backend Systems</span><span>85%</span></div>
+    <div class="bar"><div class="bar-fill" style="width:85%"></div></div>
+  </div>
+
+  <div class="skill">
+    <div class="skill-title"><span>System Architecture</span><span>85%</span></div>
+    <div class="bar"><div class="bar-fill" style="width:85%"></div></div>
+  </div>
+
+  <div class="skill">
+    <div class="skill-title"><span>UI/UX Design</span><span>80%</span></div>
+    <div class="bar"><div class="bar-fill" style="width:80%"></div></div>
+  </div>
+
+  <div class="skill">
+    <div class="skill-title"><span>Game / Server Development</span><span>75%</span></div>
+    <div class="bar"><div class="bar-fill" style="width:75%"></div></div>
+  </div>
+
+  <!-- EXPERIENCE MODEL -->
+  <h3>Development Background</h3>
+  <p>
+    My development journey began with GTA server systems, where I built and managed custom environments.
+    This foundation evolved into broader expertise across applications, platforms, and full-scale systems.
+  </p>
+
+  <p>
+    Being self-taught has enabled me to rapidly adapt to new technologies, solve complex challenges,
+    and continuously refine my approach based on real-world demands.
+  </p>
+
+  <!-- PROFESSIONAL VALUE -->
+  <h3>Professional Value</h3>
+  <div class="grid">
+    <div class="card glass">Problem-Solving Mindset</div>
+    <div class="card glass">Scalable System Design</div>
+    <div class="card glass">Business-Oriented Development</div>
+    <div class="card glass">Continuous Learning & Adaptation</div>
+  </div>
+
+  <!-- CERTIFICATIONS -->
+  <h3>Learning & Certifications</h3>
+  <p>
+    Continuous development through self-learning platforms and real-world project execution.
+    Certifications complement practical experience gained through building and deploying live systems.
+  </p>
+
+  <div class="grid">
+    <div class="card glass">SoloLearn Certifications</div>
+    <div class="card glass">Independent System Development</div>
+    <div class="card glass">Hands-On Project Experience</div>
+  </div>
+
+</section>
+
+<section id="services" class="hidden">
+  <h2>Services</h2>
+
+  <div class="grid">
+
+    <div class="card glass">
+      <h3>Website Development</h3>
+      <p>
+        I build modern, fast, and responsive websites for businesses, brands, and startups.
+        From landing pages to full platforms with dashboards and systems.
+      </p>
+      <p><strong>Includes:</strong> UI Design, Hosting Setup, SEO Basics</p>
+      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+        Request Service
+      </button>
+    </div>
+
+    <div class="card glass">
+      <h3>Apps & Systems Development</h3>
+      <p>
+        Custom-built applications and systems that automate businesses,
+        manage clients, and generate income.
+      </p>
+      <p><strong>Includes:</strong> Dashboards, Admin Panels, Automation</p>
+      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+        Request Service
+      </button>
+    </div>
+
+    <div class="card glass">
+      <h3>Games & FiveM Servers</h3>
+      <p>
+        Development of custom games and FiveM servers with unique features,
+        systems, and immersive gameplay experiences.
+      </p>
+      <p><strong>Includes:</strong> Custom Scripts, UI, Server Setup</p>
+      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+        Request Service
+      </button>
+    </div>
+
+    <div class="card glass">
+      <h3>Graphics & Poster Design</h3>
+      <p>
+        High-quality digital designs for brands, artists, and businesses.
+        Clean visuals that attract attention and build identity.
+      </p>
+      <p><strong>Includes:</strong> Posters, Ads, Branding Assets</p>
+      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+        Request Service
+      </button>
+    </div>
+
+    <div class="card glass">
+      <h3>Web Hosting & Deployment</h3>
+      <p>
+        Get your website live and running with secure hosting,
+        domain setup, and performance optimization.
+      </p>
+      <p><strong>Includes:</strong> Domain Setup, Hosting, Maintenance</p>
+      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+        Request Service
+      </button>
+    </div>
+
+    <div class="card glass">
+      <h3>Phone Repairs</h3>
+      <p>
+        Repair services for smartphones including screen replacement,
+        battery issues, charging ports, and software fixes.
+      </p>
+      <p><strong>Devices:</strong> Android & iPhone</p>
+      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+        Request Service
+      </button>
+    </div>
+
+    <div class="card glass">
+      <h3>Computer & Laptop Repairs</h3>
+      <p>
+        Troubleshooting, repairs, and upgrades for computers and laptops.
+        From hardware fixes to software optimization.
+      </p>
+      <p><strong>Includes:</strong> OS Install, Upgrades, Virus Removal</p>
+      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+        Request Service
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<section id="projects" class="hidden">
+  <h2>Projects</h2>
+
+  <h3>Live Projects</h3>
+  <div class="grid">
+    <div class="card glass">
+      <img src="images/icon-512.png" class="project-img">
+      <h4>Smart Invoice Manager</h4>
+      <h5>Website & App</h5>
+      <p>Automated invoicing system for businesses.</p>
+      <a href="https://smartinvoicemanager.co.za/" target="_blank" ><button class="btn">Visit</button></a>
+    </div>
+
+    <div class="card glass">
+      <img src="images/home.jpg" class="project-img">
+      <h4>Intellectual Villagerz</h4>
+      <h5>Website & App</h5>
+      <p>Innovation and creative platform.</p>
+      <a href="https://intellectualvillagerz.co.za/" target="_blank" ><button class="btn">Visit</button></a>
+    </div>
+
+    <div class="card glass">
+      <img src="images/ivpad.jpeg" class="project-img">
+      <h4>IVPAD  </h4>
+      <h5>Website & App</h5>
+      <p>Music discovery and artist platform.</p>
+      <a href="https://ivpad.co.za/" target="_blank" style="color:#4da6ff;"><button class="btn">Visit</button></a>
+    </div>
+
+  </div>
+
+  <h3>Live Demo Projects</h3>
+  <div class="grid">
+    <div class="card glass">
+      <img src="images/I.V mie.png" class="project-img">
+      <h4>I.V Mine</h4>
+      <h5>Website & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('I.V Mine')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/cos.png" class="project-img">
+      <h4>ConsoleOS </h4>
+      <h5>Operating System & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('ConsoleOS')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/RP-Life-Game.png" class="project-img">
+      <h4>RP Life Game</h4>
+      <h5>App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('RP Life Game')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Premium car detailing logo design.png" class="project-img">
+      <h4>Premium Car Detailing </h4>
+      <h5>Website & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('Premium Car Detailing')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/silo.jpg" class="project-img">
+      <h4>SILO SHOTOKAN SHOP</h4>
+      <h5>Website & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('SILO SHOTOKAN SHOP')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/I.V Cover Art Studio.png" class="project-img">
+      <h4>I.V Cover Art Studio</h4>
+      <h5>Website & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('I.V Cover Art Studio')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/3D Sandbox Engine.png" class="project-img">
+      <h4>3D Sandbox Engine</h4>
+      <h5>Website & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('3D Sandbox Engine')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Clothing Designer.png" class="project-img">
+      <h4>Clothing Designer</h4>
+      <h5>Operating System & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('Clothing Designer')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Car-Chassis-Builder.png" class="project-img">
+      <h4>Car Chassis Builder</h4>
+      <h5>Operating System & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('Car Chassis Builder')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Smart Property.png" class="project-img">
+      <h4>Smart Property</h4>
+      <h5>Website & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('Smart Property')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/DriveAid.png" class="project-img">
+      <h4>DriveAid</h4>
+      <h5>Website & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('DriveAid')">Test Demo</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Local Brand.png" class="project-img">
+      <h4>Local Brand</h4>
+      <h5>Website & App</h5>
+      <p>Coming soon.</p>
+      <button class="btn" onclick="startDemo('Local Brand')">Test Demo</button>
+    </div>
+  </div>
+
+  <h3>Upcoming Demo Projects</h3>
+  <div class="grid">
+    <div class="card glass" onclick="showProjectDetails('jewelry')">
+      <img src="images/pm.png" class="project-img">
+      <h4>P.Mjewelry</h4>
+      <h5>Website & App</h5>
+      <p>In development.</p>
+    </div>
+
+    <div class="card glass" onclick="showProjectDetails('chassis')">
+      <img src="images/AION Core AI System.png" class="project-img">
+      <h4>AION Core AI</h4>
+      <h5>Operating System & App</h5>
+      <p>In development.</p>
+    </div>
+
+    <div class="card glass" onclick="showProjectDetails('ivstudios')">
+      <img src="images/I.V-Studios.png" class="project-img">
+      <h4>I.V Studios </h4>
+      <h5>Operating System & App</h5>
+      <p>In development.</p>
+    </div>
+
+    <div class="card glass" onclick="showProjectDetails('ivstudios')">
+      <img src="images/ContractFlow System.png" class="project-img">
+      <h4>ContractFlow</h4>
+      <h5>Operating System & App</h5>
+      <p>In development.</p>
+    </div>
+  </div>
+</section>
+
+<section id="products" class="hidden">
+  <h2>Digital Products Marketplace</h2>
+  <p style="color:#aaa;max-width:600px;">
+    Explore ready-built systems, applications, UI designs, and code modules.
+    Request access to get pricing, demos, and custom deployment options.
+  </p>
+
+  <!-- FULL SYSTEMS -->
+  <h3>Full Systems (Ready-to-Deploy)</h3>
+  <div class="grid">
+
+    <div class="card glass">
+      <img src="images/Cv Builder.png" class="project-img">
+      <h3>Cv Builder</h3>
+      <p>Complete automation system with dashboard, users, and backend.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Cv Builder')">Request Access</button>
+      <button class="btn" onclick="startDemo('Cv Builder')">Demo</button>
+      <button class="btn" onclick="requestCustom('Cv Builder')">Setup Help</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Veltrix Booking System.png" class="project-img">
+      <h3>Veltrix Booking System</h3>
+      <p>Appointment system with client tracking and notifications.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Veltrix Booking System')">Request Access</button>
+      <button class="btn" onclick="startDemo('Veltrix Booking System')">Demo</button>
+      <button class="btn" onclick="requestCustom('Veltrix Booking System')">Setup Help</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Syntra Media Platform.png" class="project-img">
+      <h3>Syntra Media Platform</h3>
+      <p>Content platform for creators with uploads and monetization tools.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Syntra Media Platform')">Request Access</button>
+      <button class="btn" onclick="startDemo('Syntra Media Platform')">Demo</button>
+      <button class="btn" onclick="requestCustom('Syntra Media Platform')">Setup Help</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Axion CRM Core.png" class="project-img">
+      <h3>Axion CRM Core</h3>
+      <p>Client management system with analytics and workflow tracking.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Axion CRM Core')">Request Access</button>
+      <button class="btn" onclick="startDemo('Axion CRM Core')">Demo</button>
+      <button class="btn" onclick="requestCustom('Axion CRM Core')">Setup Help</button>
+    </div>
+
+  </div>
+
+  <!-- SEMI BUILT -->
+  <h3>Semi-Built Apps (Needs Hosting & Setup)</h3>
+  <div class="grid">
+
+    <div class="card glass">
+      <img src="images/FlowStack Dashboard.png" class="project-img">
+      <h3>FlowStack Dashboard</h3>
+      <p>Admin dashboard system with backend logic ready.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('FlowStack Dashboard')">Request Access</button>
+      <button class="btn" onclick="startDemo('FlowStack Dashboard')">Demo</button>
+      <button class="btn" onclick="requestCustom('FlowStack Dashboard')">Setup Help</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/CodePulse API System.png" class="project-img">
+      <h3>CodePulse API System</h3>
+      <p>Backend API system for handling data and users.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('CodePulse API System')">Request Access</button>
+      <button class="btn" onclick="startDemo('CodePulse API System')">Demo</button>
+      <button class="btn" onclick="requestCustom('CodePulse API System')">Setup Help</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Zentrix App Base.png" class="project-img">
+      <h3>Zentrix App Base</h3>
+      <p>App foundation system with routing and structure.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Zentrix App Base')">Request Access</button>
+      <button class="btn" onclick="startDemo('Zentrix App Base')">Demo</button>
+      <button class="btn" onclick="requestCustom('Zentrix App Base')">Setup Help</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/DataMint Backend Kit.png" class="project-img">
+      <h3>DataMint Backend Kit</h3>
+      <p>Database-ready backend structure for fast deployment.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('DataMint Backend Kit')">Request Access</button>
+      <button class="btn" onclick="startDemo('DataMint Backend Kit')">Demo</button>
+      <button class="btn" onclick="requestCustom('DataMint Backend Kit')">Setup Help</button>
+    </div>
+
+  </div>
+
+  <!-- UI -->
+  <h3>UI / Frontend Packs</h3>
+  <div class="grid">
+
+    <div class="card glass">
+      <img src="images/UIX Dashboard Kit.png" class="project-img">
+      <h3>UIX Dashboard Kit</h3>
+      <p>Modern admin UI design with charts and layouts.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('UIX Dashboard Kit')">Request Access</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/LaunchPad Landing Pack.png" class="project-img">
+      <h3>LaunchPad Landing Pack</h3>
+      <p>High-conversion landing page templates.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('LaunchPad Landing Pack')">Request Access</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/PixelPro UI System.png" class="project-img">
+      <h3>PixelPro UI System</h3>
+      <p>Clean UI components for web apps.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('PixelPro UI System')">Request Access</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/WebDesign Starter Kit.png" class="project-img">
+      <h3>WebDesign Starter Kit</h3>
+      <p>Basic website layouts and UI elements.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('WebDesign Starter Kit')">Request Access</button>
+    </div>
+
+  </div>
+
+  <!-- CODE -->
+  <h3>Code Modules (Plug & Play)</h3>
+  <div class="grid">
+
+    <div class="card glass">
+      <img src="images/Dark Mode System.png" class="project-img">
+      <h3>Dark Mode System</h3>
+      <p>Toggle-ready dark/light mode script.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Dark Mode System')">Request Access</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Email Form Handler.png" class="project-img">
+      <h3>Email Form Handler</h3>
+      <p>Working contact form + backend logic.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Email Form Handler')">Request Access</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Auth Login System.png" class="project-img">
+      <h3>Auth Login System</h3>
+      <p>User login & authentication module.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Auth Login System')">Request Access</button>
+    </div>
+
+    <div class="card glass">
+      <img src="images/Database Connect Kit.png" class="project-img">
+      <h3>Database Connect Kit</h3>
+      <p>Quick database connection setup.</p>
+      <p style="color:#4da6ff;">Price: On Request</p>
+
+      <button class="btn" onclick="openInquiry('Database Connect Kit')">Request Access</button>
+    </div>
+
+  </div>
+
+</section>
+<section id="contact" class="hidden">
+  <h2>Contact</h2>
+  <p>Let's build something powerful together</p>
+  <div class="card glass">
+    <p>My Phone Number: 067 106 9520</p>
+    <a href="https://wa.me/+27671069520" target="_blank">
+      <button class="btn">Hire Me</button>
+    </a>
+  </div>
+  <div class="card glass">
+    <p>My email: Siyabonganani9@gmail.com</p>
+    <a href="mailto:Siyabonganani9@gmail.com">
+      <button class="btn">Hire Me</button>
+    </a>
+  </div>
+</section>
+<footer style="text-align:center;padding:30px;color:#666;">
+  Built by Siyabonga • Digital Architect • System Creator
+</footer>
+<script>
+const demoLinks = {
+  "Nexora Systems": "https://yourusername.github.io/nexora-system/",
+  "Veltrix Booking": "https://yourusername.github.io/veltrix-booking/",
+  "Orbyte Portfolio": "https://yourusername.github.io/orbyte-portfolio/",
+  "Syntra Media Engine": "https://yourusername.github.io/syntra-media/",
+  "P.Mjewelry": "https://siyabonga-nani.github.io/P.Mjewelry/",
+  "SILO SHOTOKAN SHOP": "https://intrllectual-villagerz.github.io/SILO-SHOTOKAN-SHOP/",
+  "ConsoleOS": "https://siyabonga-nani.github.io/ConsoleOS/",
+  "RP Life Game": "https://siyabonga-nani.github.io/LIFERP/",
+  "I.V Cover Art Studio": "https://siyabonga-nani.github.io/I.V-Cover-Art-Studio/",
+  "3D Sandbox Engine": "https://siyabonga-nani.github.io/3D-Sandbox-Engine/",
+  "Smart Property": "https://siyabonga-nani.github.io/Smart-Property/",
+  "Car Chassis Builder": "https://siyabonga-nani.github.io/Car-Chassis-Builder/",
+  "DriveAid": "https://siyabonga-nani.github.io/DriveAid/",
+  "Clothing Designer": "https://siyabonga-nani.github.io/Clothing-Designer/",
+  "Cv Builder": "https://siyabonga-nani.github.io/Cv-Builder/",
+  "Premium Car Detailing": "https://siyabonga-nani.github.io/Premium-Car-Detailing/",
+  "I.V Mine": "https://siyabonga-nani.github.io/I.V-Mine/"
+
+};
+
+function startDemo(project){
+
+  const link = demoLinks[project];
+
+  if(!link){
+    notify("⚠️ Demo not available yet");
+    return;
+  }
+
+  let timeLeft = 900; // 15 minutes = 900 seconds
+  let timer;
+
+  const viewer = document.createElement("div");
+
+  viewer.style.position = "fixed";
+  viewer.style.top = "0";
+  viewer.style.left = "0";
+  viewer.style.width = "100%";
+  viewer.style.height = "100%";
+  viewer.style.background = "#000";
+  viewer.style.zIndex = "9999";
+  viewer.style.display = "flex";
+  viewer.style.flexDirection = "column";
+
+  viewer.innerHTML = `
+    <div style="padding:10px;background:#111;display:flex;justify-content:space-between;align-items:center;">
+
+      <span>Live Demo: ${project}</span>
+
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span id="demoTimer">15:00</span>
+
+        <!--<button class="btn" onclick="window.open('${link}','_blank')">Open Full</button>-->
+        <button class="btn" onclick="closeDemo()">Close</button>
+      </div>
+    </div>
+
+    <iframe src="${link}" style="flex:1;border:none;"></iframe>
+  `;
+
+  document.body.appendChild(viewer);
+
+  // TIMER FUNCTION
+  timer = setInterval(() => {
+    timeLeft--;
+
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+
+    document.getElementById("demoTimer").innerText =
+      `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+    if(timeLeft <= 0){
+      clearInterval(timer);
+
+      viewer.innerHTML = `
+        <div style="margin:auto;text-align:center;">
+          <h2>⏱️ Demo Time Ended</h2>
+          <p>Upgrade or purchase to continue using the system.</p>
+
+          <button class="btn" onclick="buyNow('${project}')">Buy Now</button>
+          <button class="btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+        </div>
+      `;
+    }
+
+  }, 1000);
+
+  // GLOBAL CLOSE FUNCTION
+  window.closeDemo = function(){
+    clearInterval(timer);
+    viewer.remove();
+  };
+}
+function copyDemo(link){
+  navigator.clipboard.writeText(link);
+  notify("🔗 Demo link copied");
+}
+
+function animateSkills(){
+  const bars = document.querySelectorAll('.bar-fill');
+  bars.forEach(bar=>{
+    const width = bar.style.width;
+    bar.style.width = "0";
+    setTimeout(()=>bar.style.width = width, 200);
+  });
+}
+
+function showSection(section){
+  const sections=document.querySelectorAll('section');
+  sections.forEach(sec=>sec.classList.add('hidden'));
+
+  const active=document.getElementById(section);
+  if(active) active.classList.remove('hidden');
+
+  if(section === "about") animateSkills();
+}
+
+function showProjectDetails(type){
+  const data = {
+    chassis:{
+      title:"Car Chassis Builder",
+      desc:"Design full car chassis systems in 3D with structural simulation and custom engineering tools.",
+      stats:"Status: 60% Complete • Platform: Web App • Category: Engineering"
+    },
+    ivstudios:{
+      title:"I.V Studios",
+      desc:"Full music production ecosystem with beat creation, mixing, and distribution.",
+      stats:"Status: 45% Complete • Platform: App • Category: Music Tech"
+    },
+    jewelry:{
+      title:"P.M Jewelry",
+      desc:"Premium online jewelry store with custom orders and luxury branding.",
+      stats:"Status: 30% Complete • Platform: Website • Category: E-Commerce"
+    }
+  };
+
+  const item = data[type];
+
+  const popup = document.createElement("div");
+  popup.style.position="fixed";
+  popup.style.top="0";
+  popup.style.left="0";
+  popup.style.width="100%";
+  popup.style.height="100%";
+  popup.style.background="rgba(0,0,0,0.9)";
+  popup.style.display="flex";
+  popup.style.alignItems="center";
+  popup.style.justifyContent="center";
+  popup.style.zIndex="9999";
+
+popup.innerHTML = `
+  <div class="glass" style="padding:30px;max-width:420px;text-align:center;animation:fadeIn 0.4s ease;">
+
+    <div style="font-size:40px;margin-bottom:10px;">🚀</div>
+
+    <h2>${item.title}</h2>
+
+    <p style="margin:15px 0;">
+      ${item.desc}
+    </p>
+
+    <p style="margin-bottom:20px;color:#4da6ff;">
+      ${item.stats}
+    </p>
+
+    <button class="btn">Notify Me</button>
+    <br><br>
+    <button class="btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+  </div>
+`;
+
+  document.body.appendChild(popup);
+}
+
+function notify(message, type="info"){
+  const note = document.createElement("div");
+
+  const colors = {
+    success: "rgba(0,200,100,0.2)",
+    error: "rgba(255,80,80,0.2)",
+    info: "rgba(77,166,255,0.2)"
+  };
+
+  note.innerText = message;
+
+  note.style.position = "fixed";
+  note.style.bottom = "20px";
+  note.style.right = "20px";
+  note.style.padding = "15px 20px";
+  note.style.background = colors[type];
+  note.style.border = "1px solid rgba(255,255,255,0.2)";
+  note.style.borderRadius = "12px";
+  note.style.backdropFilter = "blur(10px)";
+  note.style.color = "#fff";
+  note.style.zIndex = "9999";
+  note.style.animation = "fadeIn 0.3s ease";
+
+  document.body.appendChild(note);
+
+  setTimeout(()=>note.remove(),3000);
+}
+
+
+const words = ["Apps", "Systems", "Platforms", "Digital Businesses"];
+let i = 0;
+let j = 0;
+let currentWord = "";
+let isDeleting = false;
+
+function typeEffect(){
+  currentWord = words[i];
+
+  if(isDeleting){
+    document.getElementById("typing").innerText = currentWord.substring(0, j--);
+  } else {
+    document.getElementById("typing").innerText = currentWord.substring(0, j++);
+  }
+
+  if(!isDeleting && j === currentWord.length + 1){
+    isDeleting = true;
+    setTimeout(typeEffect, 1000);
+    return;
+  }
+
+  if(isDeleting && j === 0){
+    isDeleting = false;
+    i = (i + 1) % words.length;
+  }
+
+  setTimeout(typeEffect, isDeleting ? 50 : 100);
+}
+
+window.onload = () => {
+  showSection('home');
+  typeEffect();
+};
+
+
+// BUY NOW SYSTEM
+function buyNow(product, price){
+  openCheckout(product, price);
+}
+
+function openCheckout(product, price){
+
+  const popup = document.createElement("div");
+
+  popup.style = `
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+  `;
+
+  popup.innerHTML = `
+    <div class="glass" style="padding:25px;width:90%;max-width:420px;">
+      <h2>Checkout</h2>
+
+      <p><strong>Product:</strong> ${product}</p>
+      <p><strong>Price:</strong> R${price}</p>
+
+      <input id="c_name" placeholder="Full Name" style="width:100%;padding:10px;margin:6px 0;">
+      <input id="c_email" placeholder="Email" style="width:100%;padding:10px;margin:6px 0;">
+      <input id="c_phone" placeholder="Phone Number" style="width:100%;padding:10px;margin:6px 0;">
+
+<select id="paymentMethod" required>
+    <option value="">Select Payment Method</option>
+    <option value="payfast">PayFast</option>
+    <option value="paypal">PayPal</option>
+    <option value="crypto">Bitcoin (BTC)</option>
+    <option value="bank">Bank Transfer</option>
+</select>
+
+      <button class="btn" onclick="submitCheckout('${product}', ${price})">
+        Complete Order
+      </button>
+
+      <button class="btn" onclick="this.parentElement.parentElement.remove()">
+        Cancel
+      </button>
+    </div>
+
+    <form id="inquiryForm">
+    <!-- your existing inputs -->
+
+    <button type="submit">Submit Request</button>
+</form>
+
+<div id="termsBox" style="display:none;">
+    <h3>Terms & Conditions</h3>
+    <p>
+        By proceeding, you agree that:
+        <br><br>
+        • This is a digital product sale and may not be refundable once delivered.<br>
+        • You are purchasing usage rights, not full ownership unless stated.<br>
+        • We are not liable for misuse, downtime, or third-party integrations.<br>
+        • Custom setup timelines may vary depending on complexity.<br>
+        • You agree not to redistribute or resell without permission.<br>
+    </p>
+
+    <label>
+        <input type="checkbox" id="agreeTerms">
+        I agree to the Terms & Conditions
+    </label>
+
+    <button onclick="proceedToPayment()">Continue</button>
+    <div id="paymentSection" style="display:none;">
+    <h3>Complete Your Payment</h3>
+    <div id="paymentDetails"></div>
+</div>
+</div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+
+
+async function submitCheckout(product, price){
+
+  const payment = document.getElementById("c_payment").value;
+
+  let endpoint = "";
+
+  if(payment === "payfast") endpoint = "/api/payfast";
+  if(payment === "paypal") endpoint = "/api/paypal";
+  if(payment === "btc") endpoint = "/api/btc";
+
+  const res = await fetch(`http://localhost:5000${endpoint}`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      product,
+      price,
+      name: document.getElementById("c_name").value,
+      email: document.getElementById("c_email").value
+    })
+  });
+
+  const data = await res.json();
+
+  // Redirect user to payment
+  window.location.href = data.url || `https://www.paypal.com/checkoutnow?token=${data.id}`;
+}
+
+// AUCTION SYSTEM
+async function placeBid(id, amount){
+
+  notify("⏳ Placing bid...");
+
+  try{
+    const res = await fetch("http://localhost:5000/api/bid", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({ id, amount })
+    });
+
+    const data = await res.json();
+
+    document.getElementById(id).innerText =
+      "R" + data.newBid.toLocaleString();
+
+    notify("✅ Bid placed", "success");
+
+  }catch{
+    notify("❌ Failed to place bid", "error");
+  }
+}
+// INVEST SYSTEM
+function invest(product){
+  alert("Investment request for " + product);
+  window.location.href = "mailto:your@email.com?subject=Investment in " + product;
+}
+
+// DETAILS POPUP
+function viewDetails(product){
+  const data = {
+    "IVPAD":{
+      desc:"A next-generation music platform focused on artist monetization and discovery.",
+      stats:"Stage: Beta • Users Target: 10,000+ • Revenue Model: Subscription + Sales"
+    },
+    "Streaming Originals":{
+      desc:"A content streaming platform focused on exclusive original productions.",
+      stats:"Stage: Concept • Monetization: Subscription • Market: Global"
+    }
+  };
+
+  const item = data[product];
+
+  const popup = document.createElement("div");
+  popup.style.position="fixed";
+  popup.style.top="0";
+  popup.style.left="0";
+  popup.style.width="100%";
+  popup.style.height="100%";
+  popup.style.background="rgba(0,0,0,0.9)";
+  popup.style.display="flex";
+  popup.style.alignItems="center";
+  popup.style.justifyContent="center";
+  popup.style.zIndex="9999";
+
+  popup.innerHTML = `
+    <div class="glass" style="padding:30px;max-width:400px;text-align:center;">
+      <h2>${product}</h2>
+      <p>${item.desc}</p>
+      <p style="margin-top:10px;color:#4da6ff;">${item.stats}</p>
+      <button class="btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for(let i=0;i<60;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    size:Math.random()*2,
+    speedX:(Math.random()-0.5)*0.5,
+    speedY:(Math.random()-0.5)*0.5
+  });
+}
+
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p=>{
+    p.x += p.speedX;
+    p.y += p.speedY;
+
+    ctx.fillStyle = "rgba(77,166,255,0.6)";
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animateParticles);
+}
+
+animateParticles();
+
+function openInvestForm(product){
+
+  const popup = document.createElement("div");
+
+  popup.style.position="fixed";
+  popup.style.top="0";
+  popup.style.left="0";
+  popup.style.width="100%";
+  popup.style.height="100%";
+  popup.style.background="rgba(0,0,0,0.95)";
+  popup.style.display="flex";
+  popup.style.alignItems="center";
+  popup.style.justifyContent="center";
+  popup.style.zIndex="9999";
+
+  popup.innerHTML = `
+    <div class="glass" style="padding:30px;max-width:400px;width:90%;">
+      <h2>Invest in ${product}</h2>
+
+      <input id="name" placeholder="Full Name" style="width:100%;margin:10px 0;padding:10px;">
+      <input id="email" placeholder="Email" style="width:100%;margin:10px 0;padding:10px;">
+      <input id="amount" placeholder="Investment Amount (ZAR)" style="width:100%;margin:10px 0;padding:10px;">
+
+      <button class="btn" onclick="submitInvestment('${product}')">Submit</button>
+      <button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+async function submitInvestment(product){
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const amount = document.getElementById("amount").value;
+
+  if(!name || !email || !amount){
+    notify("⚠️ Please fill all fields");
+    return;
+  }
+
+  const btn = event.target;
+  btn.innerText = "Processing...";
+  btn.disabled = true;
+
+  try{
+    const res = await fetch("http://localhost:5000/api/invest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        amount,
+        product
+      })
+    });
+
+    const data = await res.json();
+
+    notify("✅ Investment submitted successfully");
+
+    document.querySelectorAll("#name,#email,#amount")
+      .forEach(i => i.value = "");
+
+  }catch(err){
+    notify("❌ Failed to connect to server");
+  }
+
+  btn.innerText = "Submit";
+  btn.disabled = false;
+}
+
+async function requestService(service){
+
+  notify("⏳ Sending request...");
+
+  try{
+    await fetch("http://localhost:5000/api/service", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({ service })
+    });
+
+    notify("✅ Request sent", "success");
+
+  }catch{
+    notify("❌ Failed to send request", "error");
+  }
+}
+
+function requestCustom(system){
+  window.location.href = "mailto:your@email.com?subject=Custom Request: " + system;
+}
+
+function requestAccess(system){
+  window.location.href = "mailto:your@email.com?subject=Request Access: " + system;
+}
+
+function openServiceForm(service){
+
+  const popup = document.createElement("div");
+
+  popup.style = `
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.92);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+  `;
+
+  popup.innerHTML = `
+    <div class="glass" style="padding:25px;width:90%;max-width:420px;">
+      <h2 style="margin-bottom:10px;">${service}</h2>
+
+      <input id="name" placeholder="Full Name" style="width:100%;padding:10px;margin:6px 0;">
+      <input id="email" placeholder="Email" style="width:100%;padding:10px;margin:6px 0;">
+      <input id="phone" placeholder="Phone Number" style="width:100%;padding:10px;margin:6px 0;">
+
+      <textarea id="message" placeholder="Project details..." style="width:100%;padding:10px;margin:6px 0;height:100px;"></textarea>
+
+      <button class="btn" onclick="submitService('${service}')">
+        Submit Request
+      </button>
+
+      <button class="btn" onclick="this.parentElement.parentElement.remove()">
+        Cancel
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+async function submitService(service){
+
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const phone = document.getElementById("phone").value;
+  const message = document.getElementById("message").value;
+
+  if(!name || !email || !phone || !message){
+    notify("⚠️ Please fill all fields");
+    return;
+  }
+
+  try{
+    const res = await fetch("http://localhost:5000/api/services", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
+        service,
+        name,
+        email,
+        phone,
+        message,
+        date: new Date()
+      })
+    });
+
+    const data = await res.json();
+
+    notify("✅ Request sent successfully", "success");
+
+    document.querySelectorAll("#name,#email,#phone,#message")
+      .forEach(i => i.value = "");
+
+    document.querySelector(".glass").parentElement.remove();
+
+  }catch(err){
+    notify("❌ Failed to send request", "error");
+  }
+}
+
+function showBTCAddress(){
+
+  const popup = document.createElement("div");
+
+  popup.style = `
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+  `;
+
+  popup.innerHTML = `
+    <div class="glass" style="padding:25px;text-align:center;">
+      <h2>Bitcoin Payment</h2>
+
+      <p>Send BTC to:</p>
+      <p style="color:#4da6ff;">bc1qYOURBTCADDRESS</p>
+
+      <p>After payment, send proof via email</p>
+
+      <button class="btn" onclick="this.parentElement.parentElement.remove()">Close</button>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+function openInquiry(product){
+
+  const popup = document.createElement("div");
+
+  popup.style = `
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+  `;
+
+  popup.innerHTML = `
+    <div class="glass" style="padding:25px;width:90%;max-width:450px;">
+      <h2>Request: ${product}</h2>
+
+      <input id="inq_name" placeholder="Full Name" style="width:100%;padding:10px;margin:6px 0;">
+      <input id="inq_email" placeholder="Email" style="width:100%;padding:10px;margin:6px 0;">
+      <input id="inq_phone" placeholder="Phone Number" style="width:100%;padding:10px;margin:6px 0;">
+
+      <textarea id="inq_message" placeholder="Tell me what you want to use this system for..."
+        style="width:100%;padding:10px;margin:6px 0;height:90px;"></textarea>
+
+      <select id="inq_payment" style="width:100%;padding:10px;margin:6px 0;">
+        <option value="">Preferred Payment Method</option>
+        <option>PayFast</option>
+        <option>PayPal</option>
+        <option>Crypto (BTC)</option>
+        <option>Bank Transfer (EFT)</option>
+      </select>
+
+      <select id="inq_budget" style="width:100%;padding:10px;margin:6px 0;">
+        <option value="">Budget Range</option>
+        <option>R1k - R5k</option>
+        <option>R5k - R20k</option>
+        <option>R20k - R100k</option>
+        <option>R100k+</option>
+      </select>
+
+      <button class="btn" onclick="submitInquiry('${product}')">
+        Submit Request
+      </button>
+
+      <button class="btn" onclick="this.parentElement.parentElement.remove()">
+        Cancel
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+async function submitInquiry(product){
+
+  const name = document.getElementById("inq_name").value;
+  const email = document.getElementById("inq_email").value;
+  const phone = document.getElementById("inq_phone").value;
+  const message = document.getElementById("inq_message").value;
+  const payment = document.getElementById("inq_payment").value;
+  const budget = document.getElementById("inq_budget").value;
+
+  if(!name || !email || !phone){
+    notify("⚠️ Please fill all required fields");
+    return;
+  }
+
+  notify("⏳ Sending request...");
+
+  try{
+    await fetch("http://localhost:5000/api/inquiry", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
+        product,
+        name,
+        email,
+        phone,
+        message,
+        payment,
+        budget,
+        date: new Date()
+      })
+    });
+
+    notify("✅ Request sent successfully", "success");
+
+  }catch{
+    notify("❌ Failed to send request", "error");
+  }
+}
+
+
+</script>
+
+</body>
+</html>
