@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siyabonga Nani.dev</title>
+
+  <style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+body{
+  background:#0b0f1a;
+  color:white;
+  overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:linear-gradient(135deg,#0b0f1a,#111827);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:10;
+  animation:fadeOut 1s ease forwards;
+  animation-delay:3s;
+}
+
+.logo{
+  font-size:28px;
+  font-weight:600;
+  background:linear-gradient(90deg,#4da6ff,#b84dff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.loader{
+  margin-top:20px;
+  width:40px;
+  height:40px;
+  border:3px solid rgba(255,255,255,0.1);
+  border-top:3px solid #4da6ff;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}
+
+@keyframes fadeOut{
+  to{
+    opacity:0;
+    visibility:hidden;
+  }
+}
+
+/* AUTH */
+#auth{
+  position:absolute;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.auth-box{
+  width:350px;
+  padding:30px;
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(20px);
+  border-radius:20px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
+
+.auth-box h2{
+  margin-bottom:20px;
+}
+
+.input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  outline:none;
+  border-radius:10px;
+  background:rgba(255,255,255,0.05);
+  color:white;
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#4da6ff,#b84dff);
+  color:white;
+  cursor:pointer;
+}
+
+.switch{
+  margin-top:15px;
+  text-align:center;
+  font-size:14px;
+  cursor:pointer;
+  opacity:0.7;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="logo">Siyabonga Nani.dev</div>
+  <div class="loader"></div>
+</div>
+
+<!-- AUTH -->
+<div id="auth">
+  <div class="auth-box">
+    <h2 id="title">Login</h2>
+
+    <input class="input" id="email" placeholder="Email">
+    <input class="input" id="password" type="password" placeholder="Password">
+
+    <button class="btn" onclick="handleAuth()">Login</button>
+
+    <div class="switch" onclick="toggleMode()" id="switchText">
+      Don't have an account? Sign Up
+    </div>
+  </div>
+</div>
+
+<script>
+let isLogin = true;
+
+/* SWITCH MODE */
+function toggleMode(){
+  isLogin = !isLogin;
+  document.getElementById("title").innerText = isLogin ? "Login" : "Sign Up";
+  document.querySelector(".btn").innerText = isLogin ? "Login" : "Create Account";
+  document.getElementById("switchText").innerText = isLogin
+    ? "Don't have an account? Sign Up"
+    : "Already have an account? Login";
+}
+
+/* AUTH */
+function handleAuth(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  if(!email || !password){
+    alert("Fill all fields");
+    return;
+  }
+
+  if(isLogin){
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+
+    if(savedUser && savedUser.email === email && savedUser.password === password){
+      enterApp();
+    }else{
+      alert("Invalid login");
+    }
+  }else{
+    localStorage.setItem("user", JSON.stringify({email,password}));
+    alert("Account created!");
+    toggleMode();
+  }
+}
+
+/* REDIRECT TO YOUR GITHUB APP */
+function enterApp(){
+  window.location.href = "app/index.html";
+}
+</script>
+
+</body>
+</html>
