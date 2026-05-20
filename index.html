@@ -3,138 +3,795 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NaniSystems.co.za</title>
+  <title>Nani Systems</title>
+  
+  <!-- Premium fonts for motherboard BIOS / Full Stack Dev experience -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Orbitron:wght@400;600;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase Classic SDK compat libraries -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
   <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-  background:#0b0f1a;
-  color:white;
-  overflow:hidden;
+body {
+  background: #020617;
+  color: white;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  height: 100vh;
+  width: 100vw;
 }
 
-/* SPLASH */
-#splash{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:linear-gradient(135deg,#0b0f1a,#111827);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  z-index:10;
-  animation:fadeOut 1s ease forwards;
-  animation-delay:3s;
+/* ==========================================================================
+   SPLASH SCREEN DESIGN (MOTHERBOARD & CPU CORE STYLING)
+   ========================================================================== */
+#splash {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, #0b1120 0%, #030712 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s;
 }
 
-.logo{
-  font-size:28px;
-  font-weight:600;
-  background:linear-gradient(90deg,#4da6ff,#b84dff);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+#splash.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.loader{
-  margin-top:20px;
-  width:40px;
-  height:40px;
-  border:3px solid rgba(255,255,255,0.1);
-  border-top:3px solid #4da6ff;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
+/* Motherboard grid lines overlay */
+.pcb-grid {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 0;
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg);}
+/* Interactive circuitry canvas */
+#circuit-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: all;
 }
 
-@keyframes fadeOut{
-  to{
-    opacity:0;
-    visibility:hidden;
-  }
+/* MOTHERBOARD HARDWARE DECORATIONS */
+.motherboard-decor {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.45;
 }
 
-/* AUTH */
-#auth{
-  position:absolute;
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+/* RAM Channels */
+.ram-channels {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 180px);
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+}
+.ram-slot {
+  width: 6px;
+  height: 180px;
+  background: linear-gradient(180deg, #15223c, #0a1120);
+  border: 1px solid rgba(0, 243, 255, 0.25);
+  border-radius: 2px;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+}
+.ram-slot::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  left: 1px;
+  right: 1px;
+  background: repeating-linear-gradient(180deg, #00f3ff 0px, #00f3ff 2px, transparent 2px, transparent 6px);
+  opacity: 0.65;
+}
+.ram-slot:nth-child(even)::after {
+  background: repeating-linear-gradient(180deg, #b84dff 0px, #b84dff 2px, transparent 2px, transparent 6px);
 }
 
-.auth-box{
-  width:350px;
-  padding:30px;
-  background:rgba(255,255,255,0.03);
-  backdrop-filter:blur(20px);
-  border-radius:20px;
-  box-shadow:0 10px 40px rgba(0,0,0,0.5);
+/* Heatsinks */
+.heatsink {
+  position: absolute;
+  top: calc(50% - 240px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 38px;
+  background: linear-gradient(90deg, #162447, #1f4068, #162447);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-around;
+  padding: 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.1);
+}
+.heatsink-fin {
+  width: 4px;
+  height: 100%;
+  background: #080c14;
+  border-radius: 1px;
 }
 
-.auth-box h2{
-  margin-bottom:20px;
+/* Dynamic Capacitors surrounding the CPU Socket */
+.capacitors {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.capacitor {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffd700 0%, #8b6508 100%);
+  border: 1px solid #05070a;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.8), 0 3px 6px rgba(0,0,0,0.6);
+}
+.cap-1 { top: -15px; left: 40px; }
+.cap-2 { top: -15px; left: 130px; }
+.cap-3 { top: -15px; left: 220px; }
+.cap-4 { bottom: -15px; left: 60px; }
+.cap-5 { bottom: -15px; left: 180px; }
+.cap-6 { top: 60px; left: -15px; }
+.cap-7 { top: 160px; left: -15px; }
+.cap-8 { top: 100px; right: -15px; }
+
+/* THE MICROPROCESSOR (CPU SOCKET) */
+.cpu-socket {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, #0e1424 0%, #04070f 100%);
+  border: 4px solid #1e293b;
+  border-radius: 14px;
+  box-shadow: 
+    0 0 50px rgba(0, 243, 255, 0.15), 
+    0 20px 40px rgba(0, 0, 0, 0.7),
+    inset 0 0 25px rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: cpu-hover 6s ease-in-out infinite;
+  z-index: 10;
 }
 
-.input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:none;
-  outline:none;
-  border-radius:10px;
-  background:rgba(255,255,255,0.05);
-  color:white;
+@keyframes cpu-hover {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.015); }
 }
 
-.btn{
-  width:100%;
-  padding:12px;
-  margin-top:15px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#4da6ff,#b84dff);
-  color:white;
-  cursor:pointer;
+/* Gold Pin Headers around Socket */
+.cpu-pins-north, .cpu-pins-south {
+  position: absolute;
+  width: 200px;
+  height: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+.cpu-pins-north { top: -6px; }
+.cpu-pins-south { bottom: -6px; }
+
+.cpu-pins-east, .cpu-pins-west {
+  position: absolute;
+  width: 6px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.cpu-pins-east { right: -6px; }
+.cpu-pins-west { left: -6px; }
+
+.pin {
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #ffd700 0%, #8b6508 100%);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.6);
 }
 
-.switch{
-  margin-top:15px;
-  text-align:center;
-  font-size:14px;
-  cursor:pointer;
-  opacity:0.7;
+/* CPU Package Chip */
+.cpu-chip {
+  width: 176px;
+  height: 176px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 3px solid #ffd700;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 12px;
+  box-shadow: 
+    0 10px 30px rgba(0,0,0,0.8),
+    inset 0 0 15px rgba(255,255,255,0.05);
+  overflow: hidden;
 }
-</style>
+
+.cpu-chip::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 40%, rgba(0, 243, 255, 0.15) 50%, transparent 60%);
+  animation: metallic-shine 4s infinite linear;
+}
+
+@keyframes metallic-shine {
+  0% { transform: translate(-30%, -30%); }
+  100% { transform: translate(30%, 30%); }
+}
+
+.cpu-brand {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffd700;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+.cpu-model {
+  font-family: 'Fira Code', monospace;
+  font-size: 8px;
+  color: #94a3b8;
+  letter-spacing: 1px;
+}
+
+/* Central glowing hologram animation */
+.cpu-hologram {
+  position: relative;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  animation: rotateRing 4s linear infinite;
+}
+.ring-1 {
+  width: 100%;
+  height: 100%;
+  border-top-color: #00f3ff;
+  border-bottom-color: #00f3ff;
+  animation-duration: 2.5s;
+}
+.ring-2 {
+  width: 75%;
+  height: 75%;
+  border-left-color: #b84dff;
+  border-right-color: #b84dff;
+  animation-duration: 3.5s;
+  animation-direction: reverse;
+}
+.ring-3 {
+  width: 50%;
+  height: 50%;
+  border-top-color: #ffd700;
+  border-bottom-color: #ffd700;
+  animation-duration: 1.8s;
+}
+.core-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #00f3ff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #00f3ff, 0 0 24px #00f3ff;
+  animation: core-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes rotateRing {
+  to { transform: rotate(360deg); }
+}
+@keyframes core-pulse {
+  to { transform: scale(1.3); opacity: 0.6; }
+}
+
+.cpu-specs {
+  font-family: 'Fira Code', monospace;
+  font-size: 8px;
+  color: #38bdf8;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* BIOS TERMINAL LOG */
+.boot-terminal {
+  width: 440px;
+  height: 140px;
+  background: rgba(3, 7, 18, 0.88);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 35px;
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.6),
+    0 0 25px rgba(0, 243, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  color: #38bdf8;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+.terminal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.terminal-dot.red { background: #ef4444; }
+.terminal-dot.yellow { background: #f59e0b; }
+.terminal-dot.green { background: #10b981; }
+.terminal-title {
+  color: #64748b;
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-left: 5px;
+}
+.terminal-content {
+  flex: 1;
+  overflow-y: auto;
+  line-height: 1.4;
+  scrollbar-width: none;
+}
+.terminal-content::-webkit-scrollbar {
+  display: none;
+}
+.log-line {
+  margin-bottom: 2px;
+  opacity: 0.95;
+  white-space: nowrap;
+}
+.log-success { color: #34d399; }
+.log-warning { color: #fbbf24; }
+.log-info { color: #60a5fa; }
+
+/* DYNAMIC STATUS BAR LOADING */
+.system-loader-container {
+  width: 360px;
+  margin-top: 25px;
+  z-index: 10;
+}
+.loader-status {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+.loader-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.loader-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #00f3ff, #b84dff);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+  border-radius: 3px;
+  transition: width 0.1s ease-out;
+}
+
+
+/* ==========================================================================
+   AUTHENTICATION INTERFACE (PREMIUM GLASSMORPHISM LOG IN CARD)
+   ========================================================================== */
+#auth {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Detailed backdrop matrix overlay for login */
+#auth::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  transform: rotate(15deg);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.auth-box {
+  width: 380px;
+  padding: 40px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(0, 243, 255, 0.02),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 10;
+  transform: translateY(0);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s;
+}
+
+.auth-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.6),
+    0 0 55px rgba(184, 77, 255, 0.06),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+}
+
+.auth-box h2 {
+  font-family: 'Orbitron', sans-serif;
+  margin-bottom: 25px;
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #00f3ff, #b84dff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  font-size: 24px;
+}
+
+.input-container {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  outline: none;
+  border-radius: 12px;
+  background: rgba(3, 7, 18, 0.4);
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.input:focus {
+  border-color: #00f3ff;
+  background: rgba(3, 7, 18, 0.75);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.25);
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #00f3ff, #b84dff);
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 243, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(184, 77, 255, 0.5);
+  background: linear-gradient(90deg, #00d4ff, #a83dff);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.switch {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: color 0.3s;
+  font-family: 'Inter', sans-serif;
+}
+
+.switch:hover {
+  color: #00f3ff;
+  text-decoration: underline;
+}
+
+/* Password Toggle HUD styling */
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #64748b;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  user-select: none;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.password-toggle:hover {
+  color: #00f3ff;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+}
+
+/* Authentic OR Divider Line */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 22px 0;
+  color: #64748b;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.auth-divider:not(:empty)::before {
+  margin-right: 12px;
+}
+
+.auth-divider:not(:empty)::after {
+  margin-left: 12px;
+}
+
+/* Google Brand Authentic Glass button */
+.google-btn {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  color: #cbd5e1;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.15),
+    inset 0 1px 1px rgba(255,255,255,0.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.google-btn:hover {
+  transform: translateY(-2px);
+  color: white;
+  border-color: rgba(0, 243, 255, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    0 0 15px rgba(0, 243, 255, 0.08);
+}
+
+.google-btn:active {
+  transform: translateY(1px);
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+}
+  </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
+<!-- SPLASH SCREEN BOOT SYSTEM -->
 <div id="splash">
-  <div class="logo">Nani Systems</div>
-  <div class="loader"></div>
+  <!-- Dynamic circuit routing board -->
+  <canvas id="circuit-canvas"></canvas>
+  
+  <!-- Faint copper grid pattern overlay -->
+  <div class="pcb-grid"></div>
+
+  <!-- Decorative Motherboard Hardware Slots -->
+  <div class="motherboard-decor">
+    <!-- RAM Channels -->
+    <div class="ram-channels">
+      <div class="ram-slot"></div>
+      <div class="ram-slot"></div>
+      <div class="ram-slot"></div>
+      <div class="ram-slot"></div>
+    </div>
+    
+    <!-- Heatsink grill at the top -->
+    <div class="heatsink">
+      <div class="heatsink-fin"></div>
+      <div class="heatsink-fin"></div>
+      <div class="heatsink-fin"></div>
+      <div class="heatsink-fin"></div>
+      <div class="heatsink-fin"></div>
+      <div class="heatsink-fin"></div>
+      <div class="heatsink-fin"></div>
+      <div class="heatsink-fin"></div>
+    </div>
+
+    <!-- Radial Solder Capacitors bordering CPU -->
+    <div class="capacitors">
+      <div class="capacitor cap-1"></div>
+      <div class="capacitor cap-2"></div>
+      <div class="capacitor cap-3"></div>
+      <div class="capacitor cap-4"></div>
+      <div class="capacitor cap-5"></div>
+      <div class="capacitor cap-6"></div>
+      <div class="capacitor cap-7"></div>
+      <div class="capacitor cap-8"></div>
+    </div>
+  </div>
+
+  <!-- Central Processor Socket Unit -->
+  <div class="cpu-socket">
+    <!-- Bordering Gold PGA/LGA Grid pins -->
+    <div class="cpu-pins-north"></div>
+    <div class="cpu-pins-south"></div>
+    <div class="cpu-pins-east"></div>
+    <div class="cpu-pins-west"></div>
+    
+    <!-- CPU Chip Body -->
+    <div class="cpu-chip">
+      <div class="cpu-brand">Nani Systems</div>
+      <div class="cpu-model">CORE_i9_FULLSTACK</div>
+      
+      <!-- Pulsing Hologram core loader -->
+      <div class="cpu-hologram">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="core-dot"></div>
+      </div>
+      
+      <div class="cpu-specs">
+        <span>V8.NODE</span>
+        <span>•</span>
+        <span>HTML.CSS.DB</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boot Diagnostic POST Terminal -->
+  <div class="boot-terminal">
+    <div class="terminal-header">
+      <span class="terminal-dot red"></span>
+      <span class="terminal-dot yellow"></span>
+      <span class="terminal-dot green"></span>
+      <span class="terminal-title">NANI BIOS CORE v4.26 POST</span>
+    </div>
+    <div class="terminal-content" id="terminal-log">
+      <!-- Generated via JS diagnostics cascade -->
+    </div>
+  </div>
+
+  <!-- real-time progress loading bar -->
+  <div class="system-loader-container">
+    <div class="loader-status">
+      <span id="loader-label">DETECTING BIOS ENGINE...</span>
+      <span id="loader-percentage">0%</span>
+    </div>
+    <div class="loader-bar-bg">
+      <div class="loader-bar-fill" id="loader-fill"></div>
+    </div>
+  </div>
 </div>
 
-<!-- AUTH -->
+<!-- CREDENTIALS AUTHORIZATION HUB -->
 <div id="auth">
   <div class="auth-box">
     <h2 id="title">Login</h2>
 
-    <input class="input" id="email" placeholder="Email">
-    <input class="input" id="password" type="password" placeholder="Password">
+    <div class="input-container">
+      <input class="input" id="email" placeholder="Email">
+    </div>
+    
+    <div class="input-container">
+      <input class="input" id="password" type="password" placeholder="Password" style="padding-right: 60px;">
+      <span class="password-toggle" onclick="togglePasswordVisibility('password', this)">SHOW</span>
+    </div>
+
+    <!-- Confirm Password Input (Only shown on signup/register mode) -->
+    <div class="input-container" id="confirm-password-container" style="display: none;">
+      <input class="input" id="confirm-password" type="password" placeholder="Confirm Password" style="padding-right: 60px;">
+      <span class="password-toggle" onclick="togglePasswordVisibility('confirm-password', this)">SHOW</span>
+    </div>
 
     <button class="btn" onclick="handleAuth()">Login</button>
+
+    <!-- Social Authentication Division -->
+    <div class="auth-divider">OR CONTINUE WITH</div>
+
+    <!-- Google login option -->
+    <button class="google-btn" onclick="handleGoogleAuth()">
+      <svg class="google-icon" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      <span>Continue with Google</span>
+    </button>
 
     <div class="switch" onclick="toggleMode()" id="switchText">
       Don't have an account? Sign Up
@@ -142,20 +799,80 @@ body{
   </div>
 </div>
 
+<!-- CORE SCRIPTS AND ANUMATIONS -->
 <script>
+// ==========================================================================
+// FIREBASE CORE SERVICES INITIALIZATION & DEVELOPER FALLBACK
+// ==========================================================================
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyC0AuFmL0ENDjxIyX39_yyU5tEVykJ6LE0",
+    authDomain: "nani-systems-f50a6.firebaseapp.com",
+    projectId: "nani-systems-f50a6",
+    storageBucket: "nani-systems-f50a6.firebasestorage.app",
+    messagingSenderId: "635712683932",
+    appId: "1:635712683932:web:38eaf5aa1e21dfde455259"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+let auth;
+let firebaseInitialized = false;
+
+try {
+  if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY_HERE") {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    firebaseInitialized = true;
+    console.log("[Firebase] Service Core active and connected to cloud backend.");
+  } else {
+    console.log("[Firebase] Mock sandbox active. Setup your credentials in firebaseConfig to connect your live database.");
+  }
+} catch (error) {
+  console.error("[Firebase] System boot failure, starting local simulation container:", error);
+}
+
+// Authentication mode toggle state
 let isLogin = true;
 
-/* SWITCH MODE */
+/* SWITCH MODE (LOGIN/SIGNUP CARD TRANSITION) */
 function toggleMode(){
   isLogin = !isLogin;
   document.getElementById("title").innerText = isLogin ? "Login" : "Sign Up";
   document.querySelector(".btn").innerText = isLogin ? "Login" : "Create Account";
+  
+  // Toggle the visibility of Confirm Password input
+  const confirmPasswordContainer = document.getElementById("confirm-password-container");
+  if (confirmPasswordContainer) {
+    confirmPasswordContainer.style.display = isLogin ? "none" : "block";
+  }
+  
   document.getElementById("switchText").innerText = isLogin
     ? "Don't have an account? Sign Up"
     : "Already have an account? Login";
 }
 
-/* AUTH */
+/* PASSWORD VISIBILITY TOGGLE CONTROLLER */
+function togglePasswordVisibility(inputId, toggleBtn) {
+  const input = document.getElementById(inputId);
+  if (input.type === "password") {
+    input.type = "text";
+    toggleBtn.textContent = "HIDE";
+    toggleBtn.style.color = "#00f3ff";
+  } else {
+    input.type = "password";
+    toggleBtn.textContent = "SHOW";
+    toggleBtn.style.color = "#64748b";
+  }
+}
+
+/* AUTHENTICATION ACTION DISPATCH */
 function handleAuth(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -165,25 +882,505 @@ function handleAuth(){
     return;
   }
 
-  if(isLogin){
-    const savedUser = JSON.parse(localStorage.getItem("user"));
-
-    if(savedUser && savedUser.email === email && savedUser.password === password){
-      enterApp();
-    }else{
-      alert("Invalid login");
+  if (isLogin) {
+    // ---- LOGIN FLOW ----
+    if (firebaseInitialized) {
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          console.log("[Firebase] Login success:", userCredential.user);
+          enterApp();
+        })
+        .catch((error) => {
+          console.error("[Firebase] Login error:", error.code, error.message);
+          alert("Authentication Error: " + error.message);
+        });
+    } else {
+      // Local fallback simulation
+      const savedUser = JSON.parse(localStorage.getItem("user"));
+      if (savedUser && savedUser.email === email && savedUser.password === password) {
+        enterApp();
+      } else {
+        alert("Invalid login credentials (local simulated environment)");
+      }
     }
-  }else{
-    localStorage.setItem("user", JSON.stringify({email,password}));
-    alert("Account created!");
-    toggleMode();
+  } else {
+    // ---- REGISTRATION / SIGN UP FLOW ----
+    const confirmPassword = document.getElementById("confirm-password").value;
+    if (!confirmPassword) {
+      alert("Confirm your password");
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    if (firebaseInitialized) {
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          console.log("[Firebase] Registration success:", userCredential.user);
+          alert("Account created successfully via Firebase!");
+          enterApp();
+        })
+        .catch((error) => {
+          console.error("[Firebase] Registration error:", error.code, error.message);
+          alert("Registration Error: " + error.message);
+        });
+    } else {
+      // Local fallback simulation
+      localStorage.setItem("user", JSON.stringify({ email, password }));
+      alert("Account created! (Local environment fallback simulation enabled)");
+      toggleMode();
+    }
   }
 }
 
-/* REDIRECT TO YOUR GITHUB APP */
+/* GOOGLE AUTHENTICATION ACTION DISPATCH */
+function handleGoogleAuth() {
+  if (firebaseInitialized) {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        console.log("[Firebase Google Auth] Success:", result.user);
+        enterApp();
+      })
+      .catch((error) => {
+        console.error("[Firebase Google Auth] Error:", error.code, error.message);
+        alert("Google Authentication Error: " + error.message);
+      });
+  } else {
+    // Local fallback simulation
+    console.log("[Google Auth] Local mock authentication invoked.");
+    alert("Simulating Google Authentication Popup...\n(Once you add Firebase credentials, this will trigger the real Google Auth popup!)");
+    
+    // Simulate successful login with mock google profile
+    localStorage.setItem("user", JSON.stringify({ 
+      email: "developer.google@gmail.com", 
+      password: "simulated_google_password" 
+    }));
+    
+    enterApp();
+  }
+}
+
+/* FORWARD NAVIGATION TO APP INTERFACE */
 function enterApp(){
   window.location.href = "app/index.html";
 }
+
+
+// ==========================================================================
+// CIRCUIT CANVAS SYSTEM: ANIMATED MOTHERBOARD SIMULATOR
+// ==========================================================================
+
+class Trace {
+  constructor(startX, startY, angle) {
+    this.points = [{ x: startX, y: startY }];
+    
+    // Choose trace aesthetic theme
+    const rand = Math.random();
+    if (rand < 0.45) {
+      this.color = '#00f3ff'; // neon cyan
+    } else if (rand < 0.9) {
+      this.color = '#b84dff'; // neon violet
+    } else {
+      this.color = '#ffd700'; // gold core line
+    }
+    
+    let curX = startX;
+    let curY = startY;
+    
+    // Create authentic grid branching PCB lines
+    const segments = Math.floor(Math.random() * 3) + 2; 
+    let curAngle = angle;
+    
+    for (let i = 0; i < segments; i++) {
+      const length = Math.random() * 110 + 60;
+      
+      // Snap path to 45 degree motherboard layouts
+      const snappedAngle = Math.round(curAngle / (Math.PI / 4)) * (Math.PI / 4);
+      const vx = Math.cos(snappedAngle);
+      const vy = Math.sin(snappedAngle);
+      
+      curX += vx * length;
+      curY += vy * length;
+      
+      this.points.push({ x: curX, y: curY });
+      
+      // Bend 45 degrees for the next channel
+      const bend = Math.random() > 0.5 ? Math.PI / 4 : -Math.PI / 4;
+      curAngle += bend;
+    }
+  }
+
+  draw(ctx) {
+    // Draw copper base line channel
+    ctx.beginPath();
+    ctx.moveTo(this.points[0].x, this.points[0].y);
+    for (let i = 1; i < this.points.length; i++) {
+      ctx.lineTo(this.points[i].x, this.points[i].y);
+    }
+    ctx.strokeStyle = 'rgba(21, 34, 60, 0.45)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Glowing inner lane
+    ctx.beginPath();
+    ctx.moveTo(this.points[0].x, this.points[0].y);
+    for (let i = 1; i < this.points.length; i++) {
+      ctx.lineTo(this.points[i].x, this.points[i].y);
+    }
+    ctx.strokeStyle = this.color === '#ffd700' ? 'rgba(255, 215, 0, 0.12)' : 'rgba(0, 243, 255, 0.07)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Copper solder pad circle at endpoint
+    const endPoint = this.points[this.points.length - 1];
+    ctx.beginPath();
+    ctx.arc(endPoint.x, endPoint.y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = this.color;
+    ctx.fill();
+    ctx.shadowBlur = 0; // reset blur
+
+    // Silver pin core
+    ctx.beginPath();
+    ctx.arc(endPoint.x, endPoint.y, 1.2, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  }
+}
+
+class Packet {
+  constructor(trace, speed) {
+    this.trace = trace;
+    this.speed = speed;
+    this.progress = 0;
+    this.x = trace.points[0].x;
+    this.y = trace.points[0].y;
+  }
+
+  update() {
+    this.progress += 0.0055 * this.speed;
+    if (this.progress >= this.trace.points.length - 1) {
+      this.progress = 0;
+      this.x = this.trace.points[0].x;
+      this.y = this.trace.points[0].y;
+    } else {
+      const segmentIndex = Math.floor(this.progress);
+      const t = this.progress - segmentIndex;
+      const p1 = this.trace.points[segmentIndex];
+      const p2 = this.trace.points[segmentIndex + 1];
+      
+      if (p1 && p2) {
+        this.x = p1.x + (p2.x - p1.x) * t;
+        this.y = p1.y + (p2.y - p1.y) * t;
+      }
+    }
+  }
+
+  draw(ctx) {
+    // Glow core packet
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = this.trace.color;
+    ctx.fill();
+
+    // Ambient halo
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = this.trace.color;
+    ctx.globalAlpha = 0.25;
+    ctx.fill();
+    ctx.globalAlpha = 1.0;
+    ctx.shadowBlur = 0;
+  }
+}
+
+class Spark {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.vx = (Math.random() - 0.5) * 3.5;
+    this.vy = (Math.random() - 0.5) * 3.5;
+    this.radius = Math.random() * 2 + 1;
+    this.alpha = 1.0;
+    this.color = Math.random() > 0.5 ? '#00f3ff' : '#b84dff';
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= 0.025;
+  }
+
+  draw(ctx) {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = this.color;
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+class MotherboardPCB {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.traces = [];
+    this.packets = [];
+    this.sparks = [];
+    
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+    
+    // Interactive mouse trackers
+    window.addEventListener('mousemove', (e) => {
+      if (Math.random() > 0.65) {
+        this.spawnSpark(e.clientX, e.clientY);
+      }
+    });
+  }
+
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.cx = this.canvas.width / 2;
+    this.cy = this.canvas.height / 2;
+    this.generateTraces();
+  }
+
+  generateTraces() {
+    this.traces = [];
+    this.packets = [];
+    
+    // Core chip size offset boundary
+    const bounds = 110;
+    
+    const numTraces = 32;
+    for (let i = 0; i < numTraces; i++) {
+      const angle = (i / numTraces) * Math.PI * 2;
+      
+      const startX = this.cx + Math.cos(angle) * bounds;
+      const startY = this.cy + Math.sin(angle) * bounds;
+      
+      const trace = new Trace(startX, startY, angle);
+      this.traces.push(trace);
+      
+      this.packets.push(new Packet(trace, Math.random() * 1.1 + 0.7));
+      if (Math.random() > 0.5) {
+        setTimeout(() => {
+          this.packets.push(new Packet(trace, Math.random() * 1.1 + 0.7));
+        }, Math.random() * 2000);
+      }
+    }
+  }
+
+  spawnSpark(x, y) {
+    if (this.sparks.length < 60) {
+      this.sparks.push(new Spark(x, y));
+    }
+  }
+
+  animate() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Dynamic sub-grid dot texture
+    this.drawGridDots();
+
+    // Base circuitry routing
+    this.traces.forEach(trace => trace.draw(this.ctx));
+    
+    // Glowing packet pathways
+    this.packets.forEach(packet => {
+      packet.update();
+      packet.draw(this.ctx);
+    });
+
+    // Cursor electric sparks
+    for (let i = this.sparks.length - 1; i >= 0; i--) {
+      const spark = this.sparks[i];
+      spark.update();
+      if (spark.alpha <= 0) {
+        this.sparks.splice(i, 1);
+      } else {
+        spark.draw(this.ctx);
+      }
+    }
+    
+    requestAnimationFrame(() => this.animate());
+  }
+
+  drawGridDots() {
+    this.ctx.fillStyle = 'rgba(0, 243, 255, 0.025)';
+    const spacing = 40;
+    for (let x = 0; x < this.canvas.width; x += spacing) {
+      for (let y = 0; y < this.canvas.height; y += spacing) {
+        if ((x + y) % 3 === 0) {
+          this.ctx.beginPath();
+          this.ctx.arc(x, y, 1, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+      }
+    }
+  }
+}
+
+// Generate small gold pins dynamically bordering the CPU Socket
+function generateSocketPins() {
+  const pinContainers = {
+    north: document.querySelector('.cpu-pins-north'),
+    south: document.querySelector('.cpu-pins-south'),
+    east: document.querySelector('.cpu-pins-east'),
+    west: document.querySelector('.cpu-pins-west')
+  };
+  
+  if (pinContainers.north) {
+    for (let i = 0; i < 30; i++) {
+      const pin = document.createElement('div');
+      pin.className = 'pin';
+      pinContainers.north.appendChild(pin);
+    }
+  }
+  if (pinContainers.south) {
+    for (let i = 0; i < 30; i++) {
+      const pin = document.createElement('div');
+      pin.className = 'pin';
+      pinContainers.south.appendChild(pin);
+    }
+  }
+  if (pinContainers.east) {
+    for (let i = 0; i < 22; i++) {
+      const pin = document.createElement('div');
+      pin.className = 'pin';
+      pinContainers.east.appendChild(pin);
+    }
+  }
+  if (pinContainers.west) {
+    for (let i = 0; i < 22; i++) {
+      const pin = document.createElement('div');
+      pin.className = 'pin';
+      pinContainers.west.appendChild(pin);
+    }
+  }
+}
+
+
+// ==========================================================================
+// BIOS DIAGNOSTICS & SYSTEM INITIALIZER SEQUENCE
+// ==========================================================================
+
+const biosLogs = [
+  { text: "NANI.DEV SYSTEM BOARD BOOT ENGINE v4.26", delay: 100, class: "log-info" },
+  { text: "CHECKING CMOS MEMORY MAP... SUCCESS", delay: 280, class: "log-success" },
+  { text: "INITIALIZING FULLSTACK CORE v9.2.6... ACTIVE", delay: 220, class: "log-info" },
+  { text: "LOADING DEVELOPMENT ENVIRONMENT PARAMETERS...", delay: 200 },
+  { text: "  >> COMPILING CSS GRAPHICS ENGINE... OK", delay: 140, class: "log-success" },
+  { text: "  >> INJECTING SILICON PCB TRACES... DONE", delay: 160, class: "log-success" },
+  { text: "  >> ESTABLISHING CONTROLLER INPUT INTERFACES... DONE", delay: 120, class: "log-success" },
+  { text: "WARNING: EXTERNAL DATABASE SOURCE CACHE UNLINKED", delay: 350, class: "log-warning" },
+  { text: "RESOLVING TARGET SYSTEM DEPENDENCIES...", delay: 200 },
+  { text: "  >> CONNECTING LOCAL STORAGE STORAGE CORE... INTACT", delay: 140, class: "log-success" },
+  { text: "  >> LOADING SECURE AUTHENTICATION DRIVER... ACTIVE", delay: 160, class: "log-success" },
+  { text: "  >> STACKING DESKTOP GRAPHICS CLIENTS... READY", delay: 180, class: "log-success" },
+  { text: "VERIFYING FULL-STACK INTERFACE INTEGRITY... SUCCESS", delay: 280, class: "log-success" },
+  { text: "LAUNCHING SECURE DEVELOPMENT CONTROL PORTAL...", delay: 150, class: "log-info" }
+];
+
+function runBootLoader() {
+  const logContainer = document.getElementById("terminal-log");
+  const loaderFill = document.getElementById("loader-fill");
+  const loaderLabel = document.getElementById("loader-label");
+  const loaderPercentage = document.getElementById("loader-percentage");
+  
+  let logIndex = 0;
+  let percent = 0;
+
+  function loadNextLog() {
+    if (logIndex < biosLogs.length) {
+      const log = biosLogs[logIndex];
+      const logLine = document.createElement("div");
+      logLine.className = "log-line " + (log.class || "");
+      logLine.textContent = log.text;
+      
+      logContainer.appendChild(logLine);
+      logContainer.scrollTop = logContainer.scrollHeight;
+      
+      // Update horizontal status label
+      loaderLabel.textContent = log.text.replace(">> ", "").trim().substring(0, 32) + "...";
+      
+      logIndex++;
+      
+      // Calculate dynamic progress target
+      const targetPercent = Math.min(
+        100,
+        Math.floor((logIndex / biosLogs.length) * 100)
+      );
+      
+      // Interpolate progress fill bar
+      interpolateFill(percent, targetPercent, log.delay, () => {
+        percent = targetPercent;
+        setTimeout(loadNextLog, log.delay);
+      });
+    } else {
+      // Completed, push bar to 100% and slide out screen
+      interpolateFill(percent, 100, 400, () => {
+        loaderLabel.textContent = "SYSTEM READY. PORTAL OPEN.";
+        setTimeout(() => {
+          document.getElementById("splash").classList.add("fade-out");
+        }, 500);
+      });
+    }
+  }
+
+  function interpolateFill(startVal, endVal, timeMs, onDone) {
+    const startT = performance.now();
+    
+    function step(now) {
+      const dt = now - startT;
+      const progress = Math.min(1, dt / timeMs);
+      const currentVal = Math.floor(startVal + (endVal - startVal) * progress);
+      
+      loaderFill.style.width = currentVal + "%";
+      loaderPercentage.textContent = currentVal + "%";
+      
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        onDone();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Trigger boot sequence after initial buffer
+  setTimeout(loadNextLog, 400);
+}
+
+
+// ==========================================================================
+// SYSTEM ENTRYPOINT INITIALIZER
+// ==========================================================================
+window.addEventListener('DOMContentLoaded', () => {
+  // Generate physical socket pins
+  generateSocketPins();
+  
+  // Initialize motherboard circuit board simulation
+  const canvasElement = document.getElementById('circuit-canvas');
+  const pcbEngine = new MotherboardPCB(canvasElement);
+  pcbEngine.animate();
+  
+  // Begin simulated firmware boot logging
+  runBootLoader();
+});
 </script>
 
 </body>
