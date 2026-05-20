@@ -241,6 +241,38 @@ button:disabled{
   cursor:not-allowed;
 }
 
+/* MOBILE RESPONSIVE STYLES */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    padding: 15px 20px;
+    align-items: center;
+  }
+  nav div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  nav button {
+    margin: 5px;
+    font-size: 14px;
+  }
+  .hero h1 {
+    font-size: 35px;
+  }
+  .hero h1 span {
+    font-size: 14px !important;
+  }
+  section {
+    padding: 180px 20px 80px; /* Adjust for larger nav on mobile */
+  }
+  body::before, body::after {
+    width: 300px;
+    height: 300px;
+  }
+}
 </style>
 </head>
 
@@ -402,6 +434,22 @@ button:disabled{
     <div class="card glass">SoloLearn Certifications</div>
     <div class="card glass">Independent System Development</div>
     <div class="card glass">Hands-On Project Experience</div>
+  </div>
+
+  <!-- CERTIFICATES BUTTON -->
+  <div style="margin-top: 40px; text-align: center;">
+    <button class="btn" onclick="toggleCertificates()">See Certificates</button>
+  </div>
+
+  <!-- CERTIFICATES DISPLAY -->
+  <div id="certificates-container" class="hidden" style="margin-top: 30px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3>My Certificates</h3>
+      <button class="btn" onclick="toggleCertificates()" style="padding: 8px 15px; font-size: 14px; background: rgba(255,50,50,0.2); border-color: rgba(255,50,50,0.5);">Close</button>
+    </div>
+    <div class="grid" id="cert-grid">
+      <!-- Certificates will be injected here by JS -->
+    </div>
   </div>
 
 </section>
@@ -856,8 +904,8 @@ button:disabled{
   <h2>Contact</h2>
   <p>Let's build something powerful together</p>
   <div class="card glass">
-    <p>My Phone Number: 067 106 9526</p>
-    <a href="https://wa.me/+27671069526" target="_blank">
+    <p>My Phone Number: 067 106 9520</p>
+    <a href="https://wa.me/+27671069520" target="_blank">
       <button class="btn">Hire Me</button>
     </a>
   </div>
@@ -871,7 +919,26 @@ button:disabled{
 <footer style="text-align:center;padding:30px;color:#666;">
   Built by Siyabonga • Digital Architect • System Creator
 </footer>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+
 <script>
+// REPLACE WITH YOUR ACTUAL FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyC0AuFmL0ENDjxIyX39_yyU5tEVykJ6LE0",
+  authDomain: "nani-systems-f50a6.firebaseapp.com",
+  projectId: "nani-systems-f50a6",
+  storageBucket: "nani-systems-f50a6.firebasestorage.app",
+  messagingSenderId: "635712683932",
+  appId: "1:635712683932:web:38eaf5aa1e21dfde455259"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 const demoLinks = {
   "Nexora Systems": "https://yourusername.github.io/nexora-system/",
   "Veltrix Booking": "https://yourusername.github.io/veltrix-booking/",
@@ -1375,20 +1442,13 @@ async function submitInvestment(product){
   btn.disabled = true;
 
   try{
-    const res = await fetch("http://localhost:5000/api/invest", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        amount,
-        product
-      })
+    await db.collection('investments').add({
+      name,
+      email,
+      amount,
+      product,
+      date: firebase.firestore.FieldValue.serverTimestamp()
     });
-
-    const data = await res.json();
 
     notify("✅ Investment submitted successfully");
 
@@ -1396,7 +1456,8 @@ async function submitInvestment(product){
       .forEach(i => i.value = "");
 
   }catch(err){
-    notify("❌ Failed to connect to server");
+    console.error(err);
+    notify("❌ Failed to submit investment to Firebase");
   }
 
   btn.innerText = "Submit";
@@ -1408,17 +1469,15 @@ async function requestService(service){
   notify("⏳ Sending request...");
 
   try{
-    await fetch("http://localhost:5000/api/service", {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify({ service })
+    await db.collection('quick_requests').add({
+      service,
+      date: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     notify("✅ Request sent", "success");
 
-  }catch{
+  }catch(err){
+    console.error(err);
     notify("❌ Failed to send request", "error");
   }
 }
@@ -1482,22 +1541,14 @@ async function submitService(service){
   }
 
   try{
-    const res = await fetch("http://localhost:5000/api/services", {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify({
-        service,
-        name,
-        email,
-        phone,
-        message,
-        date: new Date()
-      })
+    await db.collection('services').add({
+      service,
+      name,
+      email,
+      phone,
+      message,
+      date: firebase.firestore.FieldValue.serverTimestamp()
     });
-
-    const data = await res.json();
 
     notify("✅ Request sent successfully", "success");
 
@@ -1507,6 +1558,7 @@ async function submitService(service){
     document.querySelector(".glass").parentElement.remove();
 
   }catch(err){
+    console.error(err);
     notify("❌ Failed to send request", "error");
   }
 }
@@ -1614,12 +1666,7 @@ async function submitInquiry(product){
   notify("⏳ Sending request...");
 
   try{
-    await fetch("http://localhost:5000/api/inquiry", {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify({
+    await db.collection('inquiries').add({
         product,
         name,
         email,
@@ -1627,17 +1674,58 @@ async function submitInquiry(product){
         message,
         payment,
         budget,
-        date: new Date()
-      })
+        date: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     notify("✅ Request sent successfully", "success");
 
-  }catch{
+  }catch(err){
+    console.error(err);
     notify("❌ Failed to send request", "error");
   }
 }
 
+// Array of your certificate images. Replace these with your actual file names.
+const certificateImages = [
+  "Certificate/cert1.jpg",
+  "Certificate/cert2.jpg",
+  "Certificate/cert3.jpg",
+  "images/cert4.jpg",
+  "images/cert5.jpg",
+  "images/cert6.jpg",
+  "images/cert7.jpg",
+  "images/cert8.jpg",
+  "images/cert9.jpg",
+  "images/cert10.jpg",
+  "images/cert11.jpg",
+  "images/cert12.jpg",
+  "images/cert13.jpg"
+];
+
+function toggleCertificates() {
+  const container = document.getElementById('certificates-container');
+  if (container.classList.contains('hidden')) {
+    container.classList.remove('hidden');
+    // Scroll smoothly to it
+    container.scrollIntoView({ behavior: 'smooth' });
+    
+    // Inject images if not already there
+    const grid = document.getElementById('cert-grid');
+    if (grid.innerHTML.trim() === '') {
+      let html = '';
+      certificateImages.forEach((imgSrc, index) => {
+        html += `
+          <div class="card glass" style="padding: 10px;">
+            <img src="${imgSrc}" alt="Certificate ${index + 1}" class="project-img" style="height: 200px; object-fit: contain;" onerror="this.src='images/icon-512.png'">
+          </div>
+        `;
+      });
+      grid.innerHTML = html;
+    }
+  } else {
+    container.classList.add('hidden');
+  }
+}
 
 </script>
 
