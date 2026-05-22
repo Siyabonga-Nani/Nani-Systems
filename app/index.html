@@ -466,7 +466,7 @@ button:disabled{
         From landing pages to full platforms with dashboards and systems.
       </p>
       <p><strong>Includes:</strong> UI Design, Hosting Setup, SEO Basics</p>
-      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+      <button class="btn" onclick="openServiceForm('Website Development')">
         Request Service
       </button>
     </div>
@@ -490,7 +490,7 @@ button:disabled{
         systems, and immersive gameplay experiences.
       </p>
       <p><strong>Includes:</strong> Custom Scripts, UI, Server Setup</p>
-      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+      <button class="btn" onclick="openServiceForm('Games & FiveM Servers')">
         Request Service
       </button>
     </div>
@@ -502,7 +502,7 @@ button:disabled{
         Clean visuals that attract attention and build identity.
       </p>
       <p><strong>Includes:</strong> Posters, Ads, Branding Assets</p>
-      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+      <button class="btn" onclick="openServiceForm('Graphics & Poster Design')">
         Request Service
       </button>
     </div>
@@ -514,7 +514,7 @@ button:disabled{
         domain setup, and performance optimization.
       </p>
       <p><strong>Includes:</strong> Domain Setup, Hosting, Maintenance</p>
-      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+      <button class="btn" onclick="openServiceForm('Web Hosting & Deployment')">
         Request Service
       </button>
     </div>
@@ -526,7 +526,7 @@ button:disabled{
         battery issues, charging ports, and software fixes.
       </p>
       <p><strong>Devices:</strong> Android & iPhone</p>
-      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+      <button class="btn" onclick="openServiceForm('Phone Repairs')">
         Request Service
       </button>
     </div>
@@ -538,7 +538,7 @@ button:disabled{
         From hardware fixes to software optimization.
       </p>
       <p><strong>Includes:</strong> OS Install, Upgrades, Virus Removal</p>
-      <button class="btn" onclick="openServiceForm('Apps & Systems Development')">
+      <button class="btn" onclick="openServiceForm('Computer & Laptop Repairs')">
         Request Service
       </button>
     </div>
@@ -909,10 +909,25 @@ button:disabled{
       <button class="btn">Hire Me</button>
     </a>
   </div>
+
   <div class="card glass">
     <p>My email: Siyabonganani9@gmail.com</p>
     <a href="mailto:Siyabonganani9@gmail.com">
       <button class="btn">Hire Me</button>
+    </a>
+  </div>
+
+  <div class="card glass">
+    <p>UpWork</p>
+    <a href="https://www.upwork.com/freelancers/~01049897c22dc98ced?mp_source=share">
+      <button class="btn">Hire Me</button>
+    </a>
+  </div>
+
+  <div class="card glass">
+    <p>youtube</p>
+    <a href="https://www.youtube.com/@NaniSystems">
+      <button class="btn">subscriber</button>
     </a>
   </div>
 </section>
@@ -958,7 +973,6 @@ const demoLinks = {
   "Cv Builder": "https://siyabonga-nani.github.io/Cv-Builder/",
   "Premium Car Detailing": "https://siyabonga-nani.github.io/Premium-Car-Detailing/",
   "I.V Mine": "https://siyabonga-nani.github.io/I.V-Mine/"
-
 };
 
 function startDemo(project){
@@ -1550,13 +1564,10 @@ async function submitService(service){
       message,
       date: firebase.firestore.FieldValue.serverTimestamp()
     });
+    
+  notify("⏳ Sending request...");
 
     notify("✅ Request sent successfully", "success");
-
-    document.querySelectorAll("#name,#email,#phone,#message")
-      .forEach(i => i.value = "");
-
-    document.querySelector(".glass").parentElement.remove();
 
   }catch(err){
     console.error(err);
