@@ -760,15 +760,24 @@ body {
 <!-- CREDENTIALS AUTHORIZATION HUB -->
 <div id="auth">
   <div class="auth-box">
-    <h2 id="title">Login</h2>
+    <!-- Premium Tabbed Interface Headers -->
+    <div class="auth-tabs" style="display: flex; margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')" style="flex: 1; padding: 12px; background: transparent; border: none; color: #00f3ff; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s ease; text-align: center; border-bottom: 2px solid #00f3ff; text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);">LOGIN</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')" style="flex: 1; padding: 12px; background: transparent; border: none; color: #64748b; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; cursor: pointer; transition: all 0.3s ease; text-align: center; border-bottom: 2px solid transparent;">CREATE ACCOUNT</button>
+    </div>
 
     <div class="input-container">
       <input class="input" id="email" placeholder="Email">
     </div>
     
-    <div class="input-container">
+    <div class="input-container" style="margin-bottom: 12px;">
       <input class="input" id="password" type="password" placeholder="Password" style="padding-right: 60px;">
       <span class="password-toggle" onclick="togglePasswordVisibility('password', this)">SHOW</span>
+    </div>
+
+    <!-- Password Recovery HUD action link -->
+    <div id="forgot-password-link" style="text-align: right; margin-top: -4px; margin-bottom: 18px;">
+      <a href="javascript:void(0)" onclick="handleForgotPassword()" style="color: #64748b; font-size: 11px; text-decoration: none; font-family: 'Inter', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='#00f3ff'" onmouseout="this.style.color='#64748b'">Forgot Password?</a>
     </div>
 
     <!-- Confirm Password Input (Only shown on signup/register mode) -->
@@ -777,7 +786,16 @@ body {
       <span class="password-toggle" onclick="togglePasswordVisibility('confirm-password', this)">SHOW</span>
     </div>
 
-    <button class="btn" onclick="handleAuth()">Login</button>
+    <!-- Login Mode Actions -->
+    <div id="login-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+      <button class="btn" onclick="handleClientAuth()" style="margin-top: 0; background: linear-gradient(90deg, #00f3ff, #0088ff); box-shadow: 0 4px 20px rgba(0, 243, 255, 0.35);">Client Login</button>
+      <button class="btn" onclick="handleAdminAuth()" style="margin-top: 0; background: linear-gradient(90deg, #b84dff, #ffd700); box-shadow: 0 4px 20px rgba(184, 77, 255, 0.35);">Admin Login</button>
+    </div>
+
+    <!-- Sign Up Mode Actions -->
+    <div id="signup-actions" style="display: none; flex-direction: column; gap: 12px; margin-top: 15px;">
+      <button class="btn" onclick="handleCreateAccount()" style="margin-top: 0; background: linear-gradient(90deg, #b84dff, #00f3ff); box-shadow: 0 4px 20px rgba(184, 77, 255, 0.35);">Create Client Account</button>
+    </div>
 
     <!-- Social Authentication Division -->
     <div class="auth-divider">OR CONTINUE WITH</div>
@@ -792,10 +810,6 @@ body {
       </svg>
       <span>Continue with Google</span>
     </button>
-
-    <div class="switch" onclick="toggleMode()" id="switchText">
-      Don't have an account? Sign Up
-    </div>
   </div>
 </div>
 
@@ -830,24 +844,151 @@ try {
   console.error("[Firebase] System boot failure, starting local simulation container:", error);
 }
 
-// Authentication mode toggle state
-let isLogin = true;
+// Authentication active state
+let activeTab = 'login';
 
-/* SWITCH MODE (LOGIN/SIGNUP CARD TRANSITION) */
-function toggleMode(){
-  isLogin = !isLogin;
-  document.getElementById("title").innerText = isLogin ? "Login" : "Sign Up";
-  document.querySelector(".btn").innerText = isLogin ? "Login" : "Create Account";
-  
-  // Toggle the visibility of Confirm Password input
+/* SWITCH TAB (LOGIN vs CREATE ACCOUNT VIEW TOGGLE) */
+function switchTab(tab) {
+  activeTab = tab;
+  const tabLogin = document.getElementById("tab-login");
+  const tabSignup = document.getElementById("tab-signup");
+  const forgotPasswordLink = document.getElementById("forgot-password-link");
   const confirmPasswordContainer = document.getElementById("confirm-password-container");
-  if (confirmPasswordContainer) {
-    confirmPasswordContainer.style.display = isLogin ? "none" : "block";
+  const loginActions = document.getElementById("login-actions");
+  const signupActions = document.getElementById("signup-actions");
+
+  if (tab === 'login') {
+    tabLogin.style.color = "#00f3ff";
+    tabLogin.style.borderBottomColor = "#00f3ff";
+    tabLogin.style.textShadow = "0 0 10px rgba(0, 243, 255, 0.4)";
+
+    tabSignup.style.color = "#64748b";
+    tabSignup.style.borderBottomColor = "transparent";
+    tabSignup.style.textShadow = "none";
+
+    forgotPasswordLink.style.display = "block";
+    confirmPasswordContainer.style.display = "none";
+    loginActions.style.display = "flex";
+    signupActions.style.display = "none";
+  } else {
+    tabSignup.style.color = "#00f3ff";
+    tabSignup.style.borderBottomColor = "#00f3ff";
+    tabSignup.style.textShadow = "0 0 10px rgba(0, 243, 255, 0.4)";
+
+    tabLogin.style.color = "#64748b";
+    tabLogin.style.borderBottomColor = "transparent";
+    tabLogin.style.textShadow = "none";
+
+    forgotPasswordLink.style.display = "none";
+    confirmPasswordContainer.style.display = "block";
+    loginActions.style.display = "none";
+    signupActions.style.display = "flex";
   }
-  
-  document.getElementById("switchText").innerText = isLogin
-    ? "Don't have an account? Sign Up"
-    : "Already have an account? Login";
+}
+
+/* PASSWORD RECOVERY RESET DISPATCHER */
+function handleForgotPassword() {
+  let email = document.getElementById("email").value.trim();
+  if (!email) {
+    email = prompt("Please enter your email address to receive a password reset link:");
+    if (!email) return;
+    document.getElementById("email").value = email;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
+  if (firebaseInitialized) {
+    auth.sendPasswordResetEmail(email)
+      .then(() => {
+        alert("A password reset email has been successfully sent to " + email);
+      })
+      .catch((error) => {
+        console.error("[Firebase Reset Error] :", error.message);
+        alert("Password Reset Error: " + error.message);
+      });
+  } else {
+    alert("Password Reset Link Sent!\n(Simulated) A recovery link has been dispatched to: " + email);
+  }
+}
+
+/* REGISTER CLIENT ACCOUNT ACTION */
+function handleCreateAccount() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirm-password").value;
+
+  if (!email || !password || !confirmPassword) {
+    alert("Please fill in all registration fields.");
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match. Please verify your password.");
+    return;
+  }
+
+  if (password.length < 6) {
+    alert("Password must be at least 6 characters long.");
+    return;
+  }
+
+  if (firebaseInitialized) {
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        console.log("[Firebase] Account creation success:", userCredential.user);
+        localStorage.setItem("currentUser", JSON.stringify({
+          email: email,
+          role: "client",
+          uid: userCredential.user.uid
+        }));
+        alert("Account created successfully!");
+        enterApp();
+      })
+      .catch((error) => {
+        console.error("[Firebase] Account creation error:", error.code, error.message);
+        alert("Account Creation Error: " + error.message);
+      });
+  } else {
+    // Local fallback simulation with duplicate checks
+    console.log("[Firebase Mock] Creating local user account.");
+    let mockUsers = [];
+    try {
+      const savedUsers = localStorage.getItem("simulatedUsers");
+      if (savedUsers) {
+        mockUsers = JSON.parse(savedUsers);
+      }
+    } catch(e) {
+      console.error("Failed to parse simulatedUsers:", e);
+    }
+
+    const userExists = mockUsers.some(u => u.email.toLowerCase() === email.toLowerCase());
+    if (userExists) {
+      alert("An account with this email already exists in local simulation container.");
+      return;
+    }
+
+    const mockUid = "mock_client_" + Math.random().toString(36).substr(2, 9);
+    mockUsers.push({ email: email, password: password, uid: mockUid });
+    localStorage.setItem("simulatedUsers", JSON.stringify(mockUsers));
+
+    localStorage.setItem("currentUser", JSON.stringify({
+      email: email,
+      role: "client",
+      uid: mockUid
+    }));
+    alert("Account created successfully in local simulation container!");
+    enterApp();
+  }
 }
 
 /* PASSWORD VISIBILITY TOGGLE CONTROLLER */
@@ -864,67 +1005,102 @@ function togglePasswordVisibility(inputId, toggleBtn) {
   }
 }
 
-/* AUTHENTICATION ACTION DISPATCH */
-function handleAuth(){
-  const email = document.getElementById("email").value;
+/* CLIENT PORTAL AUTHENTICATION ACTION */
+function handleClientAuth() {
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  if(!email || !password){
-    alert("Fill all fields");
+  if (!email || !password) {
+    alert("Please enter both email and password.");
     return;
   }
 
-  if (isLogin) {
-    // ---- LOGIN FLOW ----
-    if (firebaseInitialized) {
-      auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          console.log("[Firebase] Login success:", userCredential.user);
-          enterApp();
-        })
-        .catch((error) => {
-          console.error("[Firebase] Login error:", error.code, error.message);
-          alert("Authentication Error: " + error.message);
-        });
-    } else {
-      // Local fallback simulation
-      const savedUser = JSON.parse(localStorage.getItem("user"));
-      if (savedUser && savedUser.email === email && savedUser.password === password) {
+  // Basic email structure validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
+  if (firebaseInitialized) {
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        console.log("[Firebase] Client login success:", userCredential.user);
+        localStorage.setItem("currentUser", JSON.stringify({
+          email: email,
+          role: "client",
+          uid: userCredential.user.uid
+        }));
         enterApp();
-      } else {
-        alert("Invalid login credentials (local simulated environment)");
-      }
-    }
+      })
+      .catch((error) => {
+        console.error("[Firebase] Client login error:", error.code, error.message);
+        alert("Login Failed: " + error.message);
+      });
   } else {
-    // ---- REGISTRATION / SIGN UP FLOW ----
-    const confirmPassword = document.getElementById("confirm-password").value;
-    if (!confirmPassword) {
-      alert("Confirm your password");
-      return;
+    // Local simulated verification
+    let mockUsers = [];
+    try {
+      const savedUsers = localStorage.getItem("simulatedUsers");
+      if (savedUsers) {
+        mockUsers = JSON.parse(savedUsers);
+      }
+    } catch(e) {
+      console.error("Failed to parse simulatedUsers:", e);
     }
-    
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
+
+    const foundUser = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (!foundUser) {
+      alert("No account found with this email. Please create an account first.");
       return;
     }
 
-    if (firebaseInitialized) {
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          console.log("[Firebase] Registration success:", userCredential.user);
-          alert("Account created successfully via Firebase!");
-          enterApp();
-        })
-        .catch((error) => {
-          console.error("[Firebase] Registration error:", error.code, error.message);
-          alert("Registration Error: " + error.message);
-        });
-    } else {
-      // Local fallback simulation
-      localStorage.setItem("user", JSON.stringify({ email, password }));
-      alert("Account created! (Local environment fallback simulation enabled)");
-      toggleMode();
+    if (foundUser.password !== password) {
+      alert("Incorrect password. Please verify your credentials.");
+      return;
     }
+
+    localStorage.setItem("currentUser", JSON.stringify({
+      email: foundUser.email,
+      role: "client",
+      uid: foundUser.uid
+    }));
+    enterApp();
+  }
+}
+
+/* SYSTEM ADMINISTRATOR AUTHENTICATION ACTION */
+function handleAdminAuth() {
+  const emailInput = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!password) {
+    alert("Please enter the admin password.");
+    return;
+  }
+
+  // Accepted admin passwords (easy to remember/use)
+  const adminPasswords = ["admin", "admin123", "naniadmin", "siyabonga"];
+  
+  if (adminPasswords.includes(password.toLowerCase())) {
+    const adminEmail = emailInput || "siyabonganani9@gmail.com";
+    
+    // Store simulated admin session in localStorage
+    localStorage.setItem("currentUser", JSON.stringify({
+      email: adminEmail,
+      role: "admin",
+      uid: "mock_admin_siyabonga"
+    }));
+
+    // Sign out from any active Firebase Auth session to prevent conflicts
+    if (firebaseInitialized) {
+      auth.signOut().catch(() => {});
+    }
+
+    // Direct redirect to Admin Dashboard
+    window.location.href = "dashboard/index.html";
+  } else {
+    alert("Invalid admin password. Try 'admin' or 'admin123'.");
   }
 }
 
@@ -935,7 +1111,19 @@ function handleGoogleAuth() {
     auth.signInWithPopup(provider)
       .then((result) => {
         console.log("[Firebase Google Auth] Success:", result.user);
-        enterApp();
+        
+        // Save in localStorage as well to be robust
+        localStorage.setItem("currentUser", JSON.stringify({
+          email: result.user.email,
+          role: result.user.email.toLowerCase() === "siyabonganani9@gmail.com" ? "admin" : "client",
+          uid: result.user.uid
+        }));
+        
+        if (result.user.email.toLowerCase() === "siyabonganani9@gmail.com") {
+          window.location.href = "dashboard/index.html";
+        } else {
+          enterApp();
+        }
       })
       .catch((error) => {
         console.error("[Firebase Google Auth] Error:", error.code, error.message);
@@ -947,9 +1135,10 @@ function handleGoogleAuth() {
     alert("Simulating Google Authentication Popup...\n(Once you add Firebase credentials, this will trigger the real Google Auth popup!)");
     
     // Simulate successful login with mock google profile
-    localStorage.setItem("user", JSON.stringify({ 
+    localStorage.setItem("currentUser", JSON.stringify({ 
       email: "developer.google@gmail.com", 
-      password: "simulated_google_password" 
+      role: "client",
+      uid: "mock_google_user" 
     }));
     
     enterApp();
