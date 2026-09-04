@@ -1,0 +1,242 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  source    String   @default("Website")
+  status    String   @default("NEW")
+  message   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quotes        QuoteRequest[]
+  consultations Consultation[]
+  messages      ContactMessage[]
+  client        Client?
+  quotations    Quotation[]
+}
+
+model QuoteRequest {
+  id                    String   @id @default(cuid())
+  leadId                String
+  serviceId             String
+  projectType           String
+  requirements          String
+  desiredTimeline       String?
+  budgetRange           String?
+  additionalInformation String?
+  status                String   @default("SUBMITTED")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  lead      Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  quotation Quotation?
+}
+
+model Consultation {
+  id               String   @id @default(cuid())
+  leadId           String
+  meetingType      String
+  requestedDate    String?
+  bookingReference String?
+  notes            String?
+  status           String   @default("REQUESTED")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  leadId    String?
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  reason    String
+  message   String
+  status    String   @default("UNREAD")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lead Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+}
+
+model Client {
+  id             String   @id @default(cuid())
+  leadId         String   @unique
+  companyDetails String?
+  billingAddress String?
+  taxNumber      String?
+  status         String   @default("ACTIVE")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  lead        Lead                @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  invoices    Invoice[]
+  onboardings ProjectOnboarding[]
+}
+
+model Quotation {
+  id                String   @id @default(cuid())
+  leadId            String
+  quoteRequestId    String?  @unique
+  token             String   @unique @default(cuid())
+  title             String   @default("Quotation")
+  lineItems         String   
+  
+  // Authoritative Commercial Amounts
+  subtotal          Decimal  @db.Decimal(12, 2)
+  discountAmount    Decimal  @default(0) @db.Decimal(12, 2)
+  additionalCharges Decimal  @default(0) @db.Decimal(12, 2)
+  taxRate           Decimal  @default(0) @db.Decimal(12, 2)
+  taxTreatment      String   @default("EXCLUDED") // INCLUDED, EXCLUDED, ZERO, NOT_APPLICABLE
+  taxAmount         Decimal  @db.Decimal(12, 2)
+  total             Decimal  @db.Decimal(12, 2)
+  currency          String   @default("ZAR")
+  
+  validUntil        DateTime
+  status            String   @default("DRAFT")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  lead         Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  quoteRequest QuoteRequest? @relation(fields: [quoteRequestId], references: [id], onDelete: SetNull)
+  contract     Contract?
+}
+
+model Contract {
+  id              String   @id @default(cuid())
+  quotationId     String   @unique
+  token           String   @unique @default(cuid())
+  terms           String   
+  status          String   @default("PENDING")
+  // E-Signature Audit Log
+  clientName      String?
+  clientEmail     String?
+  clientIp        String?
+  signedAt        DateTime?
+  naniSignedAt    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  quotation  Quotation          @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  invoices   Invoice[]
+  onboarding ProjectOnboarding?
+}
+
+model Invoice {
+  id                String   @id @default(cuid())
+  contractId        String?
+  clientId          String
+  token             String   @unique @default(cuid())
+  invoiceNumber     String   @unique
+  title             String   @default("Invoice")
+  issueDate         DateTime
+  dueDate           DateTime
+  
+  // Authoritative Commercial Amounts
+  subtotal          Decimal  @db.Decimal(12, 2)
+  discountAmount    Decimal  @default(0) @db.Decimal(12, 2)
+  additionalCharges Decimal  @default(0) @db.Decimal(12, 2)
+  taxRate           Decimal  @default(0) @db.Decimal(12, 2)
+  taxTreatment      String   @default("EXCLUDED")
+  taxAmount         Decimal  @db.Decimal(12, 2)
+  total             Decimal  @db.Decimal(12, 2)
+  amountPaid        Decimal  @default(0) @db.Decimal(12, 2)
+  amountDue         Decimal  @db.Decimal(12, 2)
+  currency          String   @default("ZAR")
+  
+  status            String   @default("DRAFT")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  client    Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contract  Contract?         @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  lineItems InvoiceLineItem[]
+  payments  Payment[]
+}
+
+model InvoiceLineItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Int
+  unitPrice   Decimal  @db.Decimal(12, 2)
+  total       Decimal  @db.Decimal(12, 2)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  invoiceId     String
+  amount        Decimal  @db.Decimal(12, 2)
+  currency      String   @default("ZAR")
+  method        String   @default("EFT")
+  
+  // Idempotency and Provider mapping
+  idempotencyKey String?  @unique
+  reference      String?  @unique 
+  providerData   String?  
+  
+  status        String   @default("PENDING")
+  date          DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model ProjectOnboarding {
+  id                    String   @id @default(cuid())
+  clientId              String
+  contractId            String?  @unique
+  token                 String   @unique @default(cuid())
+  
+  businessContext       String?
+  projectObjectives     String?
+  servicesRequired      String?
+  targetAudience        String?
+  brandGuidelines       String?
+  existingDomain        String?
+  competitors           String?
+  designDirection       String?
+  requiredFeatures      String?
+  contentReadiness      String?
+  importantIntegrations String?
+  technicalRequirements String?
+  additionalNotes       String?
+  resourceLinks         String?
+  
+  status                String   @default("PENDING")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contract Contract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorType     String   
+  actorId       String?  
+  action        String   
+  entityType    String   
+  entityId      String
+  previousState String?  
+  newState      String?  
+  reason        String?
+  createdAt     DateTime @default(now())
+}
